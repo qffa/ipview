@@ -1,2 +1,4 @@
 from .front import front
-from .site import site
+from .request import request
+from .admin import admin
+from .setting import setting

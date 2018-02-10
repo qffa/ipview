@@ -6,10 +6,14 @@ from ipview.models import db
 
 
 def register_blueprint(app):
-    from .handlers import front, site
+    from .handlers import front, request, admin, setting
     
     app.register_blueprint(front)
-    app.register_blueprint(site)
+    app.register_blueprint(request)
+    app.register_blueprint(setting)
+    app.register_blueprint(admin)
+
+
 
 
 
