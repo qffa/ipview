@@ -4,4 +4,27 @@
 
 {% block content %}
     <h1 class="page-header">Site</h1>
+    <div class="command-btn">
+        <a href="{{ url_for("admin.add_site") }}" type="button" class="btn btn-sm btn-primary">Add Site</a>
+    </div>
+	<table class="table table-hover text-nowrap">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Site Name</th>
+				<th>Description</th>
+				<th>Operate</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for site in sites %}
+			<tr>
+				<td>{{ site.id }}</td>
+				<td>{{ site.site_name }}</td>
+				<td>{{ site.description }}</td>
+				<td>pass</td>
+			</tr>
+        {% endfor %}
+		</tbody>
+	</table>
 {% endblock %}

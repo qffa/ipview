@@ -1,0 +1,14 @@
+{% extends "admin/admin_base.html" %}
+{% from "macros.html" import render_form %}
+
+
+{% block content %}
+    <h1 class="page-header">Add Site</h1>
+
+    <div class="form">
+        {{ render_form(form, url_for("admin.add_site")) }}
+    </div>
+
+
+
+{% endblock %}
