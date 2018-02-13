@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, redirect
-from ipview.forms import AddSiteForm
-from ipview.models import Site
+from ipview.forms import AddSiteForm, AddSubnetForm
+from ipview.models import Site, Subnet
 
 
 
@@ -43,11 +43,19 @@ def delete_site(site_id):
 
 @admin.route("/subnet")
 def subnet():
-    
-    return render_template("admin/subnet.html")
+    subnets = Subnet.query.all()
+    return render_template("admin/subnet.html", subnets=subnets)
 
 
 @admin.route("/subnet/add", methods=['GET', 'POST'])
 def add_subnet():
+    form = AddSubnetForm()
+    form.site_id.choices = [(site.id, site.site_name) for site in Site.query.order_by('site_name')]
+    if form.validate_on_submit():
+        form.add_subnet()
+        return redirect(url_for("admin.subnet"))
+    else:
+        return render_template("/admin/add_subnet.html", form=form)
 
-    return render_template("/admin/add_subnet.html")
+
+

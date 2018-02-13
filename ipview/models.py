@@ -29,10 +29,9 @@ class Subnet(Base):
     id = db.Column(db.Integer, primary_key=True)
     subnet_name = db.Column(db.String(32), nullable=False)
     subnet_address = db.Column(db.String(64), nullable=False, unique=True)
-    subnet_mask = db.Column(db.String(64), nullable=False)
-    gateway = db.Column(db.String(64), nullable=False)
-    dns1 = db.Column(db.String(64), nullable=False)
-    dns2 = db.Column(db.String(64))
+    subnet_mask = db.Column(db.String(64))
+    gateway = db.Column(db.String(64))
+    dns = db.Column(db.String(256))
     description = db.Column(db.String(256), nullable=False)
     vlan = db.Column(db.SmallInteger, default=0)    # 0 means not a VLAN
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'))

@@ -3,10 +3,39 @@
 {% block subnet %} class="active"{% endblock %}
 
 {% block content %}
-    <h1 class="page-header">Sbunet</h1>
+    <h1 class="page-header">Subnet</h1>
     <div class="command-btn">
         <a type="button" class="btn btn-primary" href="{{ url_for("admin.add_subnet") }}">Add Subnet</a>
     </div>
-
+    <table class="table table-hover text-nowrap">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Subnet Address</th>
+                <th>Gateway</th>
+                <th>DNS</th>
+                <th>Description</th>
+                <th>VLAN</th>
+                <th>Site</th>
+                <th>Operate</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for subnet in subnets %}
+            <tr>
+                <td>{{ subnet.id }}</td>
+                <td>{{ subnet.subnet_name }}</td>
+                <td>{{ subnet.subnet_address }}</td>
+                <td>{{ subnet.gateway }}</td>
+                <td>{{ subnet.dns }}</td>
+                <td>{{ subnet.description }}</td>
+                <td>{{ subnet.vlan }}</td>
+                <td>{{ subnet.site.site_name }}</td>
+                <td>pass</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock %}
