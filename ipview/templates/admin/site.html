@@ -2,10 +2,12 @@
 
 {% block title %}site - ipview{% endblock %}
 
+{% block site %} class="active"{% endblock %}
+
 {% block content %}
     <h1 class="page-header">Site</h1>
     <div class="command-btn">
-        <a href="{{ url_for("admin.add_site") }}" type="button" class="btn btn-sm btn-primary">Add Site</a>
+        <a href="{{ url_for("admin.add_site") }}" type="button" class="btn btn-primary">Add Site</a>
     </div>
 	<table class="table table-hover text-nowrap">
 		<thead>

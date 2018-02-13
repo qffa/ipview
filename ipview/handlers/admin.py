@@ -30,15 +30,24 @@ def add_site():
 
 
 
-@admin.route("/admin/<int:site_id>/edit", methods=['GET', 'POST'])
+@admin.route("/site/<int:site_id>/edit", methods=['GET', 'POST'])
 def edit_site(site_id):
     pass
 
 
 
-@admin.route("/admin/<int:site_id>/delete")
+@admin.route("/site/<int:site_id>/delete")
 def delete_site(site_id):
     pass
 
 
+@admin.route("/subnet")
+def subnet():
+    
+    return render_template("admin/subnet.html")
 
+
+@admin.route("/subnet/add", methods=['GET', 'POST'])
+def add_subnet():
+
+    return render_template("/admin/add_subnet.html")

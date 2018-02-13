@@ -22,9 +22,9 @@
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
 				<ul class="nav navbar-nav navbar-right">
-					<li class="{% block request %}{% endblock %}"><a href="{{ url_for("request.index") }}">request</a></li>
-					<li class="{% block admin %}{% endblock %}"><a href="{{ url_for("admin.index") }}">administrate</a></li>
-					<li class="{% block setting %}{% endblock %}"><a href="{{ url_for("setting.index") }}">setting</a></li>
+					<li{% block request %}{% endblock %}><a href="{{ url_for("request.index") }}">request</a></li>
+					<li{% block admin %}{% endblock %}><a href="{{ url_for("admin.index") }}">administrate</a></li>
+					<li{% block setting %}{% endblock %}><a href="{{ url_for("setting.index") }}">setting</a></li>
 					<li><a href="#">help</a></li>
 				</ul>
 				<form class="navbar-form navbar-right">
