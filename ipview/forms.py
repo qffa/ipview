@@ -6,7 +6,6 @@ from ipview.models import db, Site, Subnet
 
 
 class SiteForm(FlaskForm):
-    id = IntegerField("id")
     site_name = StringField("Site Name", validators=[Required(), Length(4, 30)])
     description = TextAreaField("Description", validators=[Required(), Length(4, 200)])
     submit = SubmitField("Submit")
@@ -32,7 +31,6 @@ class SiteForm(FlaskForm):
 
 
 class AddSubnetForm(FlaskForm):
-    id = IntegerField("id")
     subnet_name = StringField("Subnet Name", validators=[Required(), Length(4, 30)])
     subnet_address = StringField("Subnet Address", render_kw={"placeholder": "192.168.1.0/24"}, validators=[Required(), Length(4, 60)])
     gateway = StringField("Gateway", validators=[Length(4, 60),])
