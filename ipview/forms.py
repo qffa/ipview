@@ -5,25 +5,34 @@ from wtforms.validators import Length, Email, EqualTo, Required
 from ipview.models import db, Site, Subnet
 
 
-class AddSiteForm(FlaskForm):
+class SiteForm(FlaskForm):
+    id = IntegerField("id")
     site_name = StringField("Site Name", validators=[Required(), Length(4, 30)])
     description = TextAreaField("Description", validators=[Required(), Length(4, 200)])
     submit = SubmitField("Submit")
 
-    def add_site(self):
-        site = Site()
+    def update_db(self, site):
         self.populate_obj(site)
         db.session.add(site)
-        db.session.commit()
-        flash("Site is added successfully", "success")
-        return site
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            flash("Site name exist.", "danger")
+            return site
+        else:
+            flash("Site is added successfully", "success")
+            return site
 
+'''
     def validate_site_name(self, field):
         if Site.query.filter_by(site_name=field.data).first():
             raise ValidationError("Site exists")
+'''
 
 
 class AddSubnetForm(FlaskForm):
+    id = IntegerField("id")
     subnet_name = StringField("Subnet Name", validators=[Required(), Length(4, 30)])
     subnet_address = StringField("Subnet Address", render_kw={"placeholder": "192.168.1.0/24"}, validators=[Required(), Length(4, 60)])
     gateway = StringField("Gateway", validators=[Length(4, 60),])

@@ -1,0 +1,25 @@
+{% extends "admin/admin_base.html" %}
+
+{% block log %} class="active"{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">Log</h1>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Event</th>
+                <th>User</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for event in events %}
+            <tr>
+                <td>{{ event.created_at }}</td>
+                <td>{{ event.event }}</td>
+                <td>{{ event.user }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

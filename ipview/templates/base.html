@@ -9,45 +9,33 @@
     </head>
 
     <body>
-	    <nav class="navbar navbar-inverse navbar-fixed-top">
-			<div class="container-fluid">
-				<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="/">IPView</a>
-				</div>
-				<div id="navbar" class="navbar-collapse collapse">
-				<ul class="nav navbar-nav navbar-right">
-					<li{% block request %}{% endblock %}><a href="{{ url_for("request.index") }}">request</a></li>
-					<li{% block admin %}{% endblock %}><a href="{{ url_for("admin.index") }}">administrate</a></li>
-					<li{% block setting %}{% endblock %}><a href="{{ url_for("setting.index") }}">setting</a></li>
-					<li><a href="#">help</a></li>
-				</ul>
-				<form class="navbar-form navbar-right">
-					<input type="text" class="form-control" placeholder="Search...">
-				</form>
-				</div>
-			</div>
-	    </nav>
-
-        <div class="container">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="close" aria-hidden="true"><span>&times;</span></button>
-                {{ message }}
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    </button>
+                <a class="navbar-brand" href="/">IPView</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li{% block request %}{% endblock %}><a href="{{ url_for("request.index") }}">request</a></li>
+                    <li{% block admin %}{% endblock %}><a href="{{ url_for("admin.index") }}">administrate</a></li>
+                    <li{% block setting %}{% endblock %}><a href="{{ url_for("setting.index") }}">setting</a></li>
+                    <li><a href="#">help</a></li>
+                </ul>
+                <form class="navbar-form navbar-right">
+                    <input type="text" class="form-control" placeholder="Search...">
+                </form>
+                </div>
             </div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
-        </div>
+        </nav>
 
-		{% block page %}{% endblock %}
+
+        {% block page %}{% endblock %}
 
 
         <script src={{ url_for('static', filename="jquery.min.js") }}></script>

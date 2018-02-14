@@ -3,20 +3,33 @@
 {% block admin %} class="active"{% endblock %}
 
 {% block page %}
+
 <div class="container-fluid">
-	<div class="row">
-		<div class="col-sm-3 col-md-2 sidebar">
-			<ul class="nav nav-sidebar">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
                 <li{% block request %}{% endblock %}><a href="#">Requests</a></li>
                 <li{% block subnet %}{% endblock %}><a href="{{ url_for("admin.subnet") }}">Subnet</a></li>
                 <li{% block site %}{% endblock %}><a href="{{ url_for("admin.site") }}">Site</a></li>
-                <li{% block log %}{% endblock %}><a href="#">Log</a></li>
-			</ul>
-		</div>
-		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-		{% block content %}{% endblock %}
-		</div>
-	</div>
+                <li{% block log %}{% endblock %}><a href="{{ url_for("admin.log") }}">Log</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="message">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="close" aria-hidden="true"><span>&times;</span></button>
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+            {% block content %}{% endblock %}
+        </div>
+    </div>
 </div>
 {% endblock %}
 

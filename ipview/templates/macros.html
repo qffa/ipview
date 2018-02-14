@@ -8,6 +8,8 @@
 {% for field in form %}
 {% if field.type == 'CSRFTokenField' %}
 	{{ '' }}
+{% elif field.name == 'id' %}
+    {{ '' }}
 {% elif field.type == 'SubmitField' %}
 	{{ form.submit(class="btn btn-primary", type="submit") }}
 {% elif field.description %}

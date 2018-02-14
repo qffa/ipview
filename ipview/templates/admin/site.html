@@ -24,7 +24,16 @@
 				<td>{{ site.id }}</td>
 				<td>{{ site.site_name }}</td>
 				<td>{{ site.description }}</td>
-				<td>pass</td>
+				<td>
+                    <div class="dropdown">
+                        <p id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="{{ url_for("admin.edit_site", site_id=site.id) }}">edit</a></li>
+                            <li><a href="{{ url_for("admin.delete_site", site_id=site.id) }}">delete</a></li>
+
+                        </ul>
+                    </div>
+                </td>
 			</tr>
         {% endfor %}
 		</tbody>
