@@ -1,6 +1,8 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+
 
 
 db = SQLAlchemy()
@@ -72,7 +74,7 @@ class Device(Base):
         return '<device: {}>'.format(self.device_name)
 
 
-class User(Base):
+class User(Base, UserMixin):
     __tablename__ = 'user'
 
     ROLE_USER = 10

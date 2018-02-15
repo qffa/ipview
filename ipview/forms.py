@@ -2,7 +2,55 @@ from flask import flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, IntegerField
 from wtforms.validators import Length, Email, EqualTo, Required
-from ipview.models import db, Site, Subnet
+from ipview.models import db, Site, Subnet, User
+
+
+
+class LoginForm(FlaskForm):
+    username = StringField(
+            "Username", 
+            render_kw={
+                "placeholder": "Username",
+                "class": "form-control",
+                "required":'',
+                "autofocus": ''
+                },
+            validators=[
+                Required(),
+                Length(3, 32)
+                ]
+            )
+
+    password = PasswordField(
+            "Password", 
+            render_kw={
+                "placeholder": "Password",
+                "class": "form-control",
+                "required":'',
+                },
+            validators=[
+                Required(),
+                Length(3, 24)
+                ]
+            )
+
+    submit = SubmitField("Sign in", render_kw={"class": "btn btn-lg btn-primary btn-block"})
+
+
+
+    def validate_username(self, field):
+        if field.data and not User.query.filter_by(username=field.data).first():
+            flash("User does not exist.", "danger")
+            raise ValidationError("user does not exist")
+
+
+    def validate_password(self, field):
+        user = User.query.filter_by(username=self.username.data).first()
+        if user and not user.check_password(field.data):
+            flash("Wrong password", "danger")
+            raise ValidationError("wrong password")
+
+
 
 
 class SiteForm(FlaskForm):

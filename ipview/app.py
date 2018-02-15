@@ -2,7 +2,7 @@ from flask import Flask
 from ipview.config import configs
 from flask_login import LoginManager
 import datetime
-from ipview.models import db
+from ipview.models import db, User
 
 
 def register_blueprint(app):
@@ -19,6 +19,15 @@ def register_blueprint(app):
 
 def register_extensions(app):
     db.init_app(app)
+
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def user_loader(id):
+        return User.query.get(id)
+
+    login_manager.login_view = 'front.login'
 
 
 
