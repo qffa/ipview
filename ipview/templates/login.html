@@ -24,7 +24,7 @@
             </div>
             <form class="form-signin" method="POST" action="{{ url_for('front.login') }}">
                 {{ form.csrf_token }}
-                <h2 class="form-signin-heading">IPView</h2>
+                <h1 class="form-signin-heading">IPView</h1>
                 {{ form.username.label(class="sr-only") }}{{ form.username }}
                 {{ form.password.label(class="sr-only") }}{{ form.password }}
                 {{ form.submit }}

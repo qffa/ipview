@@ -3,7 +3,7 @@
 {% block log %} class="active"{% endblock %}
 
 {% block content %}
-    <h1 class="page-header">Log</h1>
+    <h1 class="page-header">Audit Log</h1>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -16,7 +16,7 @@
         {% for event in events %}
             <tr>
                 <td>{{ event.created_at }}</td>
-                <td>{{ event.event }}</td>
+                <td>{{ event.content }}</td>
                 <td>{{ event.user }}</td>
             </tr>
         {% endfor %}

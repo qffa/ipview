@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for
 from ipview.forms import LoginForm
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
 from ipview.models import User
 
 
@@ -11,7 +11,10 @@ front = Blueprint('front', __name__)
 @front.route('/')
 @login_required
 def index():
-    return redirect(url_for("request.new"))
+    if current_user.is_admin:
+        return redirect(url_for("admin.site"))
+    else:
+        return redirect(url_for("request.new"))
 
 
 @front.route('/login', methods=['GET', 'POST'])

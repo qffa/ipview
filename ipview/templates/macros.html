@@ -12,14 +12,11 @@
     {{ '' }}
 {% elif field.type == 'SubmitField' %}
 	{{ form.submit(class="btn btn-primary", type="submit") }}
-{% elif field.description %}
-    <div class="form-group">
-        {{ field.label }} {{ field(class="form-control") }}
-        <span class="text-muted">{{ field.description }}</span>
-    </div>
 {% else %}
 	<div class="form-group {% if field.errors %}has-error{% endif %}">
-		{{ field.label }} {{ field(class="form-control") }}
+		{{ field.label }}
+        {{ field(class="form-control") }}
+        {% if field.description %}<span class="text-muted">{{ field.description }}</span>{% endif %}
 		{% if field.errors %}
 		{% for error in field.errors %}
 		<span class="help-block">{{ error }}</span>

@@ -1,8 +1,8 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
-
+from flask_login import UserMixin, current_user
+from flask import flash
 
 
 db = SQLAlchemy()
@@ -12,6 +12,40 @@ class Base(db.Model):
     __abstract__ = True
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+    def save(self):
+        db.session.add(self)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            flash("DB operation failed on '{}'".format(self.__tablename__), "danger")
+            return False
+        else:
+            return True
+
+    def delete(self):
+        db.session.delete(self)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            flash("DB operation failed on '{}'".format(self.__tablename__), "danger")
+            return False
+        else:
+            return True
+
+
+    def log_event(self, content):
+        event = Event(
+            user=current_user.username,
+            content=content
+            )
+
+        return event.save()
+
+
 
 
 class Site(Base):
@@ -33,7 +67,8 @@ class Subnet(Base):
     subnet_address = db.Column(db.String(64), nullable=False, unique=True)
     subnet_mask = db.Column(db.String(64))
     gateway = db.Column(db.String(64))
-    dns = db.Column(db.String(256))
+    dns1 = db.Column(db.String(64))
+    dns2 = db.Column(db.String(64))
     description = db.Column(db.String(256), nullable=False)
     vlan = db.Column(db.SmallInteger, default=0)    # 0 means not a VLAN
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
@@ -63,6 +98,7 @@ class Device(Base):
     ip_id = db.Column(db.Integer, db.ForeignKey('ip.id'), primary_key=True)
     ip = db.relationship('IP', uselist=False)
     device_name = db.Column(db.String(64), nullable=False, unique=True)
+    mac_address = db.Column(db.String(32), nullable=False, unique=True)
     description = db.Column(db.String(256), nullable=False)
     requester = db.Column(db.String(32), nullable=False)        # username of requester
     owner = db.Column(db.String(32), nullable=False)
@@ -117,7 +153,7 @@ class Request(Base):
     STATUS_REJECTED = 30
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(32), nullable=False)     # username of requester
+    username = db.Column(db.String(32), nullable=False)             # username of requester
     status = db.Column(db.SmallInteger, default=STATUS_REQUESTING)
     device_name = db.Column(db.String(64), nullable=False)
     device_description = db.Column(db.String(256), nullable=False)
@@ -136,9 +172,8 @@ class Event(Base):
     __tableanme__ = 'event'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(32), nullable=False)
-    event = db.Column(db.String(1024), nullable=False)
-
+    user = db.Column(db.String(32), nullable=False)
+    content = db.Column(db.String(1024), nullable=False)
 
 
 
