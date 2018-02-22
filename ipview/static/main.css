@@ -122,3 +122,16 @@ body {
 .message {
   margin: 2px 10px 2px 10px;
 }
+
+.filter {
+  margin-bottom: 10px;
+  padding-left: 20px;
+}
+
+.filter-label {
+  font-weight: normal;
+  margin-right: 5px;
+}
+
+
+

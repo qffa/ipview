@@ -107,4 +107,16 @@ class AddSubnetForm(FlaskForm):
 
 
 
+class FilterForm(FlaskForm):
+    filter_by = SelectField(
+        "filter",
+        validators=[Required()]
+        )
+    value = StringField(
+        "value",
+        validators=[Required(), Length(2, 64)]
+        )
+    submit = SubmitField("Submit")
+
+
 

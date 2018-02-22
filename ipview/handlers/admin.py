@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, url_for, redirect, flash, abort
-from ipview.forms import SiteForm, AddSubnetForm
+from ipview.forms import SiteForm, AddSubnetForm, FilterForm
 from ipview.models import db, Site, Subnet, Event
 from flask_login import current_user
 
@@ -22,7 +22,9 @@ def index():
 @admin.route("/site")
 def site():
     sites = Site.query.order_by(Site.site_name).all()
-    return render_template("admin/site.html", sites=sites)
+    form = FilterForm()
+    form.filter_by.choices = [("site_name", "site name"), ("description", "description")]
+    return render_template("admin/site.html", sites=sites, form=form)
 
 
 @admin.route("/site/add", methods=['GET', 'POST'])

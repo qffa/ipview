@@ -1,14 +1,28 @@
 {% extends "admin/admin_base.html" %}
-
 {% block title %}IPView | Site{% endblock %}
-
 {% block site %} class="active"{% endblock %}
-
 {% block content %}
+
     <h1 class="page-header">Site</h1>
     <div class="command-btn">
         <a href="{{ url_for("admin.add_site") }}" type="button" class="btn btn-primary">Add Site</a>
     </div>
+
+    <section class="filter">
+    <form class="form-inline" method="POST" action="#">
+        {{ form.csrf_token }}
+        <div class="form-group">
+            {{ form.filter_by.label(class="filter-label") }}
+            {{ form.filter_by(class="form-control filter-input") }}
+        </div>
+        <div class="form-group">
+            {{ form.value.label(class="sr-only") }}
+            {{ form.value(class="form-control") }}
+        </div>
+        {{ form.submit(class="btn btn-default", type="submit") }}
+    </form>
+    </section>
+
 	<table class="table table-hover text-nowrap">
 		<thead>
 			<tr>
@@ -30,7 +44,6 @@
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                             <li><a href="{{ url_for("admin.edit_site", site_id=site.id) }}">edit</a></li>
                             <li><a href="{{ url_for("admin.delete_site", site_id=site.id) }}">delete</a></li>
-
                         </ul>
                     </div>
                 </td>
