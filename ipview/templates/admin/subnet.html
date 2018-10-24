@@ -22,13 +22,22 @@
         <tbody>
         {% for subnet in subnets %}
             <tr>
-                <td>{{ subnet.id }}</td>
+                <td><a href="{{ url_for("admin.subnet_detail", subnet_id=subnet.id) }}">{{ subnet.id }}</a></td>
                 <td>{{ subnet.subnet_name }}</td>
                 <td>{{ subnet.subnet_address }}</td>
                 <td>{{ subnet.description }}</td>
                 <td>{{ subnet.vlan }}</td>
                 <td>{{ subnet.site.site_name }}</td>
-                <td>pass</td>
+                <td>
+                    <div class="dropdown">
+                    <p id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a href="{{ url_for("admin.edit_subnet", subnet_id=subnet.id) }}">edit</a></li>
+                        <li><a href="{{ url_for("admin.delete_subnet", subnet_id=subnet.id) }}">delete</a></li>
+                    </ul>
+                    </div>
+                
+                </td>
             </tr>
         {% endfor %}
         </tbody>

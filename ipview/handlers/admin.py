@@ -1,6 +1,7 @@
+import ipaddress
 from flask import Blueprint, render_template, url_for, redirect, flash, abort
 from ipview.forms import SiteForm, AddSubnetForm, FilterForm
-from ipview.models import db, Site, Subnet, Event
+from ipview.models import db, Site, Subnet, IP, Event
 from flask_login import current_user
 
 
@@ -65,7 +66,7 @@ def delete_site(site_id):
         site.log_event("Site is removed. site name: {}".format(site.site_name))
         flash("success", "success")
     else:
-        flash("failed", "danger")
+        flash("site remove failed", "danger")
 
     return redirect(url_for("admin.site"))
 
@@ -84,9 +85,47 @@ def add_subnet():
     if form.validate_on_submit():
         form.populate_obj(subnet)
         subnet.save()
+        ip_network = ipaddress.ip_network(subnet.subnet_address)
+        for ip_addr in ip_network.hosts():
+            ip = IP()
+            ip.ip_address = ip_addr.exploded
+            ip.subnet = subnet
+            ip.save()
+        subnet.log_event("Add new subnent: {}".format(subnet.subnet_address))
         return redirect(url_for("admin.subnet"))
     else:
         return render_template("/admin/add_subnet.html", form=form)
 
 
+@admin.route("/subnet/<int:subnet_id>/edit")
+def edit_subnet():
+    pass
 
+
+@admin.route("/subnet/<int:subnet_id>/delete")
+def delete_subnet(subnet_id):
+    """delete subnet and IP addresses in it.
+    """
+    subnet = Subnet.query.get_or_404(subnet_id)
+    for ip in subnet.ips:
+        db.session.delete(ip)
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+        flash("IP addresses removed failed", "danger")
+    if subnet.delete():
+        subnet.log_event("Subnet {} is removed.".format(subnet.subnet_address))
+        flash("success", "success")
+    else:
+        flash("subnet remove failed", "danger")
+    
+    return redirect(url_for("admin.subnet"))
+
+
+@admin.route("/subnet/<int:subnet_id>")
+def subnet_detail(subnet_id):
+    """display all IP addresses in this subnet.
+    """
+    subnet = Subnet.query.get_or_404(subnet_id)
+    return render_template("admin/subnet_detail.html", subnet=subnet)

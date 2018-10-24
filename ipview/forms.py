@@ -1,3 +1,4 @@
+import ipaddress
 from flask import flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, IntegerField
@@ -84,9 +85,13 @@ class AddSubnetForm(FlaskForm):
         "Gateway",
         validators=[Length(0, 60),]
         )
-    dns = StringField(
-        "DNS",
-        validators=[Length(0, 200)]
+    dns1 = StringField(
+        "DNS1",
+        validators=[Length(0, 60)]
+        )
+    dns2 = StringField(
+        "DNS2",
+        validators=[Length(0, 60)]
         )
     site_id = SelectField(
         "Site", 
@@ -104,6 +109,29 @@ class AddSubnetForm(FlaskForm):
         )
     submit = SubmitField("Submit")
 
+    def validate_subnet_address(self, field):
+        try:
+            ipaddress.ip_network(field.data)
+        except:
+           raise ValidationError("wrong subnet format!")
+
+    def verify_ip_address(self, ip):
+        if ip == '':
+            return
+        try:
+            ipaddress.ip_address(ip)
+        except:
+            raise ValidationError("wrong IP format!")
+
+    def validate_dns1(self, field):
+        self.verify_ip_address(field.data)
+
+    def validate_dns2(self, field):
+        self.verify_ip_address(field.data)
+
+    def validate_gateway(self, field):
+        self.verify_ip_address(field.data)
+            
 
 
 
