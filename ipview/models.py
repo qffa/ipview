@@ -86,28 +86,27 @@ class IP(Base):
     subnet_id = db.Column(db.Integer, db.ForeignKey('subnet.id'))
     subnet = db.relationship('Subnet', uselist=False, backref=db.backref('ips'))
     is_inuse = db.Column(db.Boolean, default=False)
-    device = db.relationship('Device', uselist=False)
+    host = db.relationship('Host', uselist=False)
+    is_online = db.Column(db.Boolean, default=False)
+    last_ping_time = db.Column(db.DateTime)
 
     def __repr__(self):
         return '<ip: {}>'.format(self.ip_address)
 
 
-class Device(Base):
-    __tablename__ = 'device'
+class Host(Base):
+    __tablename__ = 'host'
 
-    ip_id = db.Column(db.Integer, db.ForeignKey('ip.id'), primary_key=True)
-    ip = db.relationship('IP', uselist=False)
-    device_name = db.Column(db.String(64), nullable=False, unique=True)
+    id = db.Column(db.Integer, primary_key=True)
+    hostname = db.Column(db.String(64), nullable=False, unique=True)
     mac_address = db.Column(db.String(32), nullable=False, unique=True)
     description = db.Column(db.String(256), nullable=False)
-    requester = db.Column(db.String(32), nullable=False)        # username of requester
     owner = db.Column(db.String(32), nullable=False)
     owner_email = db.Column(db.String(64), nullable=False)
-    is_online = db.Column(db.Boolean, default=False)
-    last_ping_time = db.Column(db.DateTime)
+    ip_info = db.Column(db.Integer, db.ForeignKey("ip.id"))
 
     def __repr__(self):
-        return '<device: {}>'.format(self.device_name)
+        return '<Host: {}>'.format(self.hostname)
 
 
 class User(Base, UserMixin):
@@ -155,12 +154,8 @@ class Request(Base):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), nullable=False)             # username of requester
     status = db.Column(db.SmallInteger, default=STATUS_REQUESTING)
-    device_name = db.Column(db.String(64), nullable=False)
-    device_description = db.Column(db.String(256), nullable=False)
-    device_owner = db.Column(db.String(32), nullable=False)
-    owner_email = db.Column(db.String(64), nullable=False)
-    request_subnet = db.Column(db.String(24), nullable=False)       # requested subnet(x.x.x.x/x)
-    assigned_ip = db.Column(db.String(64))
+    host = db.Column(db.Integer, db.ForeignKey("host.id"))
+    subnet = db.Column(db.Integer, db.ForeignKey("subnet.id"))
 
 
     def __repr__(self):
