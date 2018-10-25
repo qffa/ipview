@@ -1,3 +1,9 @@
+"""for login and index page
+file name: front.py
+
+"""
+
+
 from flask import Blueprint, render_template, redirect, url_for
 from ipview.forms import LoginForm
 from flask_login import login_required, login_user, logout_user, current_user
@@ -12,7 +18,7 @@ front = Blueprint('front', __name__)
 @login_required
 def index():
     if current_user.is_admin:
-        return redirect(url_for("admin.site"))
+        return redirect(url_for("admin.supernet"))
     else:
         return redirect(url_for("request.new"))
 

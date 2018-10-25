@@ -59,21 +59,46 @@ class Site(Base):
         return '<site: {}>'.format(self.name)
 
 
+class Supernet(Base):
+    __tablename__ = 'supernet'
+
+
+    id = db.Column(db.Integer, primary_key=True)
+    supernet_address = db.Column(db.String(64), nullable=False, unique=True)
+    address_pack = db.Column(db.BigInteger())
+    description = db.Column(db.String(256), nullable=False)
+
+    __mapper_args__ = {
+        "order_by": address_pack
+    }
+
+    def __repr__(self):
+        return '<Supernet: {}>'.format(self.supernet.supernet_address)
+
+
 class Subnet(Base):
     __tablename__ = 'subnet'
+
 
     id = db.Column(db.Integer, primary_key=True)
     subnet_name = db.Column(db.String(32), nullable=False)
     subnet_address = db.Column(db.String(64), nullable=False, unique=True)
+    address_pack = db.Column(db.BigInteger())
     subnet_mask = db.Column(db.String(64))
     gateway = db.Column(db.String(64))
     dns1 = db.Column(db.String(64))
     dns2 = db.Column(db.String(64))
     description = db.Column(db.String(256), nullable=False)
     vlan = db.Column(db.SmallInteger, default=0)    # 0 means not a VLAN
+    supernet_id = db.Column(db.Integer, db.ForeignKey('supernet.id'), nullable=False)
+    supernet = db.relationship('Supernet', uselist=False, backref=db.backref('subnets'))
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'), nullable=False)
     site = db.relationship('Site', uselist=False, backref=db.backref('subnets'))
 
+
+    __mapper_args__ = {
+        "order_by": address_pack
+    }
     def __repr__(self):
         return '<subnet: {}({})>'.format(self.subnet_name, self.subnet_address)
 

@@ -1,0 +1,15 @@
+{% extends "admin/admin_base.html" %}
+{% from "macros.html" import render_form %}
+
+{% block network %} class="active"{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">Add Supernet</h1>
+
+    <div class="form">
+        {{ render_form(form, url_for("admin.add_supernet")) }}
+    </div>
+
+
+
+{% endblock %}

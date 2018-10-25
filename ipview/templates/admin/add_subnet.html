@@ -7,7 +7,7 @@
 {% block content %}
     <h1 class="page-header">Add Sbunet</h1>
     <div class="form">
-    {{ render_form(form, url_for("admin.add_subnet")) }}
+    {{ render_form(form, url_for("admin.add_subnet", supernet_id=supernet.id)) }}
     </div>
 
 {% endblock %}

@@ -1,0 +1,38 @@
+{% extends "admin/admin_base.html" %}
+
+{% block network %} class="active"{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">Netwok</h1>
+    <div class="command-btn">
+        <a type="button" class="btn btn-primary" href="{{ url_for("admin.add_supernet") }}">New Supernet</a>
+    </div>
+    <table class="table table-hover text-nowrap">
+        <thead>
+            <tr>
+                <th>Supernet Address</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for supernet in supernets %}
+            <tr>
+                <td><a href="{{ url_for("admin.supernet_detail", supernet_id=supernet.id) }}">{{ supernet.supernet_address }}</a></td>
+                <td>{{ supernet.description }}</td>
+                <td>
+                    <div class="dropdown">
+                    <p id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a href="{{ url_for("admin.edit_supernet", supernet_id=supernet.id) }}">edit</a></li>
+                        <li><a href="{{ url_for("admin.delete_supernet", supernet_id=supernet.id) }}">delete</a></li>
+                    </ul>
+                    </div>
+                
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

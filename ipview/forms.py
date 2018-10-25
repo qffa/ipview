@@ -3,8 +3,31 @@ from flask import flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, IntegerField
 from wtforms.validators import Length, Email, EqualTo, Required, NumberRange
-from ipview.models import db, Site, Subnet, User
+from ipview.models import db, Site, Supernet, Subnet, User
 
+
+class validate_tools():
+
+    @staticmethod
+    def verify_ip_address(ip):
+        if ip == '':
+            return
+        try:
+            ipaddress.ip_address(ip)
+        except:
+            raise ValidationError("wrong IP format!")
+
+    @staticmethod
+    def verify_ip_network(network):
+        try:
+            ipaddress.ip_network(network)
+        except:
+            raise ValidationError("wrong subnet format!")
+
+    @staticmethod
+    def overlaps_ip_network(network, other_network):
+        if network.overlaps(other_network):
+            raise ValidationError("subnet conflict")
 
 
 class LoginForm(FlaskForm):
@@ -70,6 +93,28 @@ class SiteForm(FlaskForm):
 '''
 
 
+class SupernetForm(FlaskForm):
+    supernet_address = StringField(
+        "Supernet Address",
+        render_kw={"placeholder": "10.0.0.0/8"},
+        validators=[Required(), Length(4, 60)]
+    )
+    description = TextAreaField(
+        "Descrition",
+        validators=[Required(), Length(4, 200)]
+        )
+    submit = SubmitField("Submit")
+
+    def validate_supernet_address(self, field):
+        validate_tools.verify_ip_network(field.data)
+        supernets = Supernet.query.all()
+        this_supernet = ipaddress.ip_network(field.data)
+        for supernet in supernets:
+            supernet = ipaddress.ip_network(supernet.supernet_address)
+            validate_tools.overlaps_ip_network(this_supernet, supernet)
+
+
+
 class AddSubnetForm(FlaskForm):
     subnet_name = StringField(
         "Subnet Name",
@@ -78,7 +123,7 @@ class AddSubnetForm(FlaskForm):
         )
     subnet_address = StringField(
         "Subnet Address",
-        render_kw={"placeholder": "192.168.1.0/24"},
+        render_kw={"placeholder": "10.10.1.0/24"},
         validators=[Required(), Length(4, 60)]
         )
     gateway = StringField(

@@ -3,16 +3,15 @@
 {% block network %} class="active"{% endblock %}
 
 {% block content %}
-    <h1 class="page-header">Subnet</h1>
+    <h1 class="page-header">{{ supernet.supernet_address }}</h1>
     <div class="command-btn">
-        <a type="button" class="btn btn-primary" href="{{ url_for("admin.add_subnet") }}">Add Subnet</a>
+        <a type="button" class="btn btn-primary" href="{{ url_for("admin.add_subnet", supernet_id=supernet.id) }}">Add Subnet</a>
     </div>
-    <table class="table table-hover text-nowrap">
+    <table class="table table-hover text-nowrap table-condensed">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
                 <th>Subnet Address</th>
+                <th>Subnet Name</th>
                 <th>Description</th>
                 <th>VLAN</th>
                 <th>Site</th>
@@ -20,17 +19,16 @@
             </tr>
         </thead>
         <tbody>
-        {% for subnet in subnets %}
+        {% for subnet in supernet.subnets %}
             <tr>
-                <td><a href="{{ url_for("admin.subnet_detail", subnet_id=subnet.id) }}">{{ subnet.id }}</a></td>
+                <td><a href="{{ url_for("admin.subnet_detail", subnet_id=subnet.id) }}">{{ subnet.subnet_address }}</a></td>
                 <td>{{ subnet.subnet_name }}</td>
-                <td>{{ subnet.subnet_address }}</td>
                 <td>{{ subnet.description }}</td>
                 <td>{{ subnet.vlan }}</td>
                 <td>{{ subnet.site.site_name }}</td>
                 <td>
                     <div class="dropdown">
-                    <p id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
+                    <p style="margin: 0 0;" id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <li><a href="{{ url_for("admin.edit_subnet", subnet_id=subnet.id) }}">edit</a></li>
                         <li><a href="{{ url_for("admin.delete_subnet", subnet_id=subnet.id) }}">delete</a></li>

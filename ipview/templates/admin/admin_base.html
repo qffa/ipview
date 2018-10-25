@@ -9,7 +9,7 @@
         <div class="col-sm-3 col-md-2 sidebar">
             <ul class="nav nav-sidebar">
                 <li{% block request %}{% endblock %}><a href="#">Requests</a></li>
-                <li{% block subnet %}{% endblock %}><a href="{{ url_for("admin.subnet") }}">Subnet</a></li>
+                <li{% block network %}{% endblock %}><a href="{{ url_for("admin.supernet") }}">Network</a></li>
                 <li{% block site %}{% endblock %}><a href="{{ url_for("admin.site") }}">Site</a></li>
                 <li{% block log %}{% endblock %}><a href="{{ url_for("admin.log") }}">Audit Log</a></li>
             </ul>
