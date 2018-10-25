@@ -113,7 +113,11 @@ class AddSubnetForm(FlaskForm):
         try:
             ipaddress.ip_network(field.data)
         except:
-           raise ValidationError("wrong subnet format!")
+            raise ValidationError("wrong subnet format!")
+        subnets = Subnet.query.all()
+        for subnet in subnets:
+            if ipaddress.ip_network(field.data).overlaps(ipaddress.ip_network(subnet.subnet_address)):
+                raise ValidationError("subnet conflict")
 
     def verify_ip_address(self, ip):
         if ip == '':
@@ -131,6 +135,12 @@ class AddSubnetForm(FlaskForm):
 
     def validate_gateway(self, field):
         self.verify_ip_address(field.data)
+        try:
+            ipaddress.ip_network(self.subnet_address.data)
+        except:
+            return
+        if ipaddress.ip_address(field.data) not in ipaddress.ip_network(self.subnet_address.data):
+            raise ValidationError("Gateway is not the subnet.")
             
 
 

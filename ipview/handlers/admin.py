@@ -38,7 +38,7 @@ def add_site():
             site.log_event("Add new site: {}".format(site.site_name))
             flash("success", "success")
         else:
-            flash("failed", "danger")
+            flash("failed to add site", "danger")
 
         return redirect(url_for("admin.site"))
     else:
@@ -84,14 +84,22 @@ def add_subnet():
     form.site_id.choices = [(site.id, site.site_name) for site in Site.query.order_by('site_name')]
     if form.validate_on_submit():
         form.populate_obj(subnet)
-        subnet.save()
-        ip_network = ipaddress.ip_network(subnet.subnet_address)
-        for ip_addr in ip_network.hosts():
-            ip = IP()
-            ip.ip_address = ip_addr.exploded
-            ip.subnet = subnet
-            ip.save()
-        subnet.log_event("Add new subnent: {}".format(subnet.subnet_address))
+        if subnet.save():
+            subnet_network = ipaddress.ip_network(subnet.subnet_address)    # ip_network obj for this subnet
+            for ip_addr in subnet_network.hosts():
+                ip = IP()
+                ip.ip_address = ip_addr.exploded
+                ip.subnet = subnet
+                db.session.add(ip)
+            try:
+                db.session.commit()
+                subnet.log_event("Add new subnent: {}".format(subnet.subnet_address))
+            except:
+                db.session.rollback()
+                subnet.delete()
+                flash("failed to create IP addresses.", "danger")
+        else:
+            flash("failed to add subnet", "danger")
         return redirect(url_for("admin.subnet"))
     else:
         return render_template("/admin/add_subnet.html", form=form)

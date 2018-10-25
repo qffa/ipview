@@ -71,7 +71,7 @@ class Subnet(Base):
     dns2 = db.Column(db.String(64))
     description = db.Column(db.String(256), nullable=False)
     vlan = db.Column(db.SmallInteger, default=0)    # 0 means not a VLAN
-    site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
+    site_id = db.Column(db.Integer, db.ForeignKey('site.id'), nullable=False)
     site = db.relationship('Site', uselist=False, backref=db.backref('subnets'))
 
     def __repr__(self):
@@ -83,7 +83,7 @@ class IP(Base):
 
     id = db.Column(db.Integer, primary_key=True)
     ip_address = db.Column(db.String(64), nullable=False, unique=True)
-    subnet_id = db.Column(db.Integer, db.ForeignKey('subnet.id'))
+    subnet_id = db.Column(db.Integer, db.ForeignKey('subnet.id'), nullable=False)
     subnet = db.relationship('Subnet', uselist=False, backref=db.backref('ips'))
     is_inuse = db.Column(db.Boolean, default=False)
     host = db.relationship('Host', uselist=False)
