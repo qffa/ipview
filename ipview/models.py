@@ -52,19 +52,19 @@ class Site(Base):
     __tablename__ = 'site'
 
     id = db.Column(db.Integer, primary_key=True)
-    site_name = db.Column(db.String(32), unique=True, index=True, nullable=False)
+    name = db.Column(db.String(32), unique=True, index=True, nullable=False)
     description = db.Column(db.String(256), nullable=False)
 
     def __repr__(self):
         return '<site: {}>'.format(self.name)
 
 
-class Supernet(Base):
-    __tablename__ = 'supernet'
+class Network(Base):
+    __tablename__ = 'network'
 
 
     id = db.Column(db.Integer, primary_key=True)
-    supernet_address = db.Column(db.String(64), nullable=False, unique=True)
+    address = db.Column(db.String(64), nullable=False, unique=True)
     address_pack = db.Column(db.BigInteger())
     description = db.Column(db.String(256), nullable=False)
 
@@ -73,7 +73,7 @@ class Supernet(Base):
     }
 
     def __repr__(self):
-        return '<Supernet: {}>'.format(self.supernet.supernet_address)
+        return '<Network: {}>'.format(self.address)
 
 
 class Subnet(Base):
@@ -81,17 +81,17 @@ class Subnet(Base):
 
 
     id = db.Column(db.Integer, primary_key=True)
-    subnet_name = db.Column(db.String(32), nullable=False)
-    subnet_address = db.Column(db.String(64), nullable=False, unique=True)
+    name = db.Column(db.String(32), nullable=False)
+    address = db.Column(db.String(64), nullable=False, unique=True)
     address_pack = db.Column(db.BigInteger())
-    subnet_mask = db.Column(db.String(64))
+    mask = db.Column(db.String(64))
     gateway = db.Column(db.String(64))
     dns1 = db.Column(db.String(64))
     dns2 = db.Column(db.String(64))
     description = db.Column(db.String(256), nullable=False)
     vlan = db.Column(db.SmallInteger, default=0)    # 0 means not a VLAN
-    supernet_id = db.Column(db.Integer, db.ForeignKey('supernet.id'), nullable=False)
-    supernet = db.relationship('Supernet', uselist=False, backref=db.backref('subnets'))
+    netowrk_id = db.Column(db.Integer, db.ForeignKey('network.id'), nullable=False)
+    network = db.relationship('Network', uselist=False, backref=db.backref('subnets'))
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'), nullable=False)
     site = db.relationship('Site', uselist=False, backref=db.backref('subnets'))
 
@@ -100,35 +100,35 @@ class Subnet(Base):
         "order_by": address_pack
     }
     def __repr__(self):
-        return '<subnet: {}({})>'.format(self.subnet_name, self.subnet_address)
+        return '<subnet: {}({})>'.format(self.name, self.address)
 
 
 class IP(Base):
     __tablename__ = 'ip'
 
     id = db.Column(db.Integer, primary_key=True)
-    ip_address = db.Column(db.String(64), nullable=False, unique=True)
+    address = db.Column(db.String(64), nullable=False, unique=True)
     subnet_id = db.Column(db.Integer, db.ForeignKey('subnet.id'), nullable=False)
     subnet = db.relationship('Subnet', uselist=False, backref=db.backref('ips'))
     is_inuse = db.Column(db.Boolean, default=False)
-    host = db.relationship('Host', uselist=False)
     is_online = db.Column(db.Boolean, default=False)
     last_ping_time = db.Column(db.DateTime)
 
     def __repr__(self):
-        return '<ip: {}>'.format(self.ip_address)
+        return '<ip: {}>'.format(self.address)
 
 
 class Host(Base):
     __tablename__ = 'host'
 
     id = db.Column(db.Integer, primary_key=True)
-    hostname = db.Column(db.String(64), nullable=False, unique=True)
+    name = db.Column(db.String(64), nullable=False, unique=True)
     mac_address = db.Column(db.String(32), nullable=False, unique=True)
     description = db.Column(db.String(256), nullable=False)
     owner = db.Column(db.String(32), nullable=False)
     owner_email = db.Column(db.String(64), nullable=False)
-    ip_info = db.Column(db.Integer, db.ForeignKey("ip.id"))
+    ip_id = db.Column(db.Integer, db.ForeignKey("ip.id"))
+    ip = db.relationship('IP', uselist=False, backref=db.backref('host'))
 
     def __repr__(self):
         return '<Host: {}>'.format(self.hostname)
@@ -184,7 +184,7 @@ class Request(Base):
 
 
     def __repr__(self):
-        return '<request: {}>'.format(self.device_name)
+        return '<request: {}>'.format(self.host.name)
 
 
 

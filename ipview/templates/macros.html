@@ -1,3 +1,6 @@
+
+<!-- render from -->
+
 {% macro render_form(form, url) %}
 <form method="POST" action="{{ url }}">
 {{ form.csrf_token }}
@@ -23,3 +26,53 @@
 {% endfor %}
 </form>
 {% endmacro %}
+
+
+
+<!-- render subnet -->
+
+{% macro render_subnet(obj) %}
+
+{% if obj.address %}
+    {% set father = 'network' %}
+{% else %}
+    {% set father = 'site' %}
+{% endif %}
+
+<table class="table table-hover text-nowrap">
+    <thead>
+        <tr>
+            <th>Subnet Address</th>
+            <th>Subnet Name</th>
+            <th>Description</th>
+            <th>VLAN</th>
+            <th>Site</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for subnet in obj.subnets %}
+        <tr>
+            <td><a href="{{ url_for("admin.subnet_detail", father=father, father_id=obj.id, subnet_id=subnet.id) }}">{{ subnet.address }}</a></td>
+            <td>{{ subnet.name }}</td>
+            <td>{{ subnet.description }}</td>
+            <td>{{ subnet.vlan }}</td>
+            <td>{{ subnet.site.name }}</td>
+            <td>
+                <div class="dropdown">
+                <p id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="{{ url_for("admin.edit_subnet", subnet_id=subnet.id) }}">edit</a></li>
+                    <li><a href="{{ url_for("admin.delete_subnet", subnet_id=subnet.id) }}">delete</a></li>
+                </ul>
+                </div>
+            
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endmacro %}
+
+
+

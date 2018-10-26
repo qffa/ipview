@@ -2,8 +2,29 @@
 
 {% block subnet %} class="active"{% endblock %}
 
+{% block nav %}
+    {% if father == 'network' %}
+    <p>
+        <a href="{{ url_for("admin.network") }}">Network</a>
+        &gt;&gt; 
+        <a href="{{ url_for("admin.network_detail", network_id=subnet.network.id) }}">{{ subnet.network.address }}</a>
+        &gt;&gt; 
+        {{ subnet.address }}
+    </p>
+    {% elif father == 'site' %}
+    <p>
+        <a href="{{ url_for("admin.site") }}">Site</a>
+        &gt;&gt; 
+        <a href="{{ url_for("admin.site_detail", site_id=subnet.site.id) }}">{{ subnet.site.name }}</a>
+        &gt;&gt; 
+        {{ subnet.address }}
+    </p>
+    {% endif %}
+
+{% endblock %}
+
 {% block content %}
-    <h1 class="page-header">{{ subnet.site.site_name }}: {{ subnet.subnet_name }} <small>{{ subnet.subnet_address }}</small></h1>
+    <h1 class="page-header">{{ subnet.site.name }}: {{ subnet.name }}</h1>
     <table class="table table-hover text-nowrap table-condensed">
         <thead>
             <tr>
@@ -17,8 +38,8 @@
         <tbody>
         {% for ip in subnet.ips %}
             <tr>
-                <td><a href="{{ url_for("admin.subnet_detail", subnet_id=subnet.id) }}">{{ ip.id }}</a></td>
-                <td>{{ ip.ip_address }}</td>
+                <td><a href="#">{{ ip.id }}</a></td>
+                <td>{{ ip.address }}</td>
                 <td>{{ ip.status }}</td>
                 <td>{{ ip.host.hostname }}</td>
                 <td>

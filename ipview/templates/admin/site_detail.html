@@ -1,0 +1,13 @@
+{% extends "admin/admin_base.html" %}
+{% from "macros.html" import render_subnet %}
+
+{% block site %} class="active"{% endblock %}
+
+{% block nav %}
+    <p><a href="{{ url_for("admin.site") }}">Site</a> &gt;&gt; {{ site.name }} </p>
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">{{ site.name }}</h1>
+    {{ render_subnet(site) }}
+{% endblock %}
