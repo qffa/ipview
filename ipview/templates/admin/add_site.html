@@ -3,6 +3,10 @@
 
 {% block site %} class="active"{% endblock %}
 
+{% block nav %}
+    <a href="{{ url_for("admin.site") }}">&larr; back</a>
+{% endblock %}
+
 {% block content %}
     <h1 class="page-header">Add Site</h1>
 

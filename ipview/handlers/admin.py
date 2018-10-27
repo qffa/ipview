@@ -1,7 +1,7 @@
 import ipaddress
-from flask import Blueprint, render_template, url_for, redirect, flash, abort
-from ipview.forms import SiteForm, NetworkForm, AddSubnetForm, FilterForm
-from ipview.models import db, Site, Network, Subnet, IP, Event
+from flask import Blueprint, render_template, url_for, redirect, flash, abort, request
+from ipview.forms import SiteForm, NetworkForm, AddSubnetForm, FilterForm, HostForm
+from ipview.models import db, Site, Network, Subnet, IP, Event, Host
 from flask_login import current_user
 
 
@@ -45,8 +45,7 @@ def add_site():
             flash("success", "success")
         else:
             flash("failed to add site", "danger")
-
-        return redirect(url_for("admin.site"))
+        return redirect(parent_url or url_for("admin.site"))
     else:
         return render_template("admin/add_site.html", form=form)
 
@@ -226,16 +225,65 @@ def delete_subnet(subnet_id):
     return redirect(url_for("admin.subnet"))
 
 
-@admin.route("/<father>/<int:father_id>/subnet/<int:subnet_id>")
-def subnet_detail(father, father_id, subnet_id):
+@admin.route("/<parent>/<int:parent_id>/subnet/<int:subnet_id>")
+def subnet_detail(parent, parent_id, subnet_id):
     """display all IP addresses in this subnet.
     """
-    if father == 'network':
-        father_obj = Network.query.get_or_404(father_id)
-    elif father == 'site':
-        father_obj = Site.query.get_or_404(father_id)
+    if parent == 'network':
+        parent_obj = Network.query.get_or_404(parent_id)
+    elif parent == 'site':
+        parent_obj = Site.query.get_or_404(parent_id)
     subnet = Subnet.query.get_or_404(subnet_id)
-    return render_template("admin/subnet_detail.html", father=father, subnet=subnet)
+    url = request.url
+    return render_template("admin/subnet_detail.html", parent=parent, subnet=subnet, parent_url=url)
+
+
+
+## IP functions
+
+@admin.route("/ip/<int:ip_id>/assign", methods=['GET', 'POST'])
+def assign_ip(ip_id):
+    """assign IP address to host
+    """
+    ip = IP.query.get_or_404(ip_id)
+    host = Host()
+    form = HostForm()
+    self_url = request.url
+    parent_url = request.args.get('next')
+    if form.validate_on_submit():
+        form.populate_obj(host)
+        ip.is_inuse = True
+        host.ip = ip
+        if ip.save() and host.save():
+            host.log_event("Assign IP {} to host {}".format(ip.address, host.name))
+            flash("IP assigned", "success")
+        else:
+            flash("failed to assign this IP", "danger")
+        return redirect(parent_url or url_for("admin.network"))
+    else:
+        return render_template("admin/assign_ip.html", ip=ip, form=form, self_url=self_url, parent_url=parent_url)
+
+
+@admin.route("/ip/<int:ip_id>/release")
+def release_ip(ip_id):
+    """release this IP address
+    """
+
+    pass
+
+
+@admin.route("/ip/<int:ip_id>/edit")
+def edit_ip(ip_id):
+    """edit the host info on this ip
+    """
+
+    pass
+
+
+
+
+
+
 
 
 

@@ -1,9 +1,15 @@
 {% extends "admin/admin_base.html" %}
 
-{% block subnet %} class="active"{% endblock %}
+{% block network %}
+    {% if parent == 'network' %} class="active"{% endif %}
+{% endblock %}
+
+{% block site %}
+    {% if parent == 'site' %} class="active"{% endif %}
+{% endblock %}
 
 {% block nav %}
-    {% if father == 'network' %}
+    {% if parent == 'network' %}
     <p>
         <a href="{{ url_for("admin.network") }}">Network</a>
         &gt;&gt; 
@@ -11,7 +17,7 @@
         &gt;&gt; 
         {{ subnet.address }}
     </p>
-    {% elif father == 'site' %}
+    {% elif parent == 'site' %}
     <p>
         <a href="{{ url_for("admin.site") }}">Site</a>
         &gt;&gt; 
@@ -40,14 +46,15 @@
             <tr>
                 <td><a href="#">{{ ip.id }}</a></td>
                 <td>{{ ip.address }}</td>
-                <td>{{ ip.status }}</td>
-                <td>{{ ip.host.hostname }}</td>
+                <td>{{ ip.is_inuse }}</td>
+                <td>{{ ip.host.name }}</td>
                 <td>
                     <div class="dropdown">
                     <p style="margin: 0 0;" id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="{{ url_for("admin.edit_subnet", subnet_id=subnet.id) }}">edit</a></li>
-                        <li><a href="{{ url_for("admin.delete_subnet", subnet_id=subnet.id) }}">delete</a></li>
+                        <li><a href="{{ url_for("admin.assign_ip", ip_id=ip.id, next=parent_url) }}">assign</a></li>
+                        <li><a href="{{ url_for("admin.release_ip", ip_id=ip.id) }}">release</a></li>
+                        <li><a href="{{ url_for("admin.edit_ip", ip_id=ip.id) }}">edit</a></li>
                     </ul>
                     </div>
                 

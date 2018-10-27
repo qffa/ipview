@@ -113,6 +113,7 @@ class IP(Base):
     is_inuse = db.Column(db.Boolean, default=False)
     is_online = db.Column(db.Boolean, default=False)
     last_ping_time = db.Column(db.DateTime)
+    host = db.relationship("Host", uselist=False)
 
     def __repr__(self):
         return '<ip: {}>'.format(self.address)
@@ -128,10 +129,10 @@ class Host(Base):
     owner = db.Column(db.String(32), nullable=False)
     owner_email = db.Column(db.String(64), nullable=False)
     ip_id = db.Column(db.Integer, db.ForeignKey("ip.id"))
-    ip = db.relationship('IP', uselist=False, backref=db.backref('host'))
+    ip = db.relationship('IP', uselist=False)
 
     def __repr__(self):
-        return '<Host: {}>'.format(self.hostname)
+        return '<Host: {}>'.format(self.name)
 
 
 class User(Base, UserMixin):

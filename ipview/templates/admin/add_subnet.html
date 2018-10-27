@@ -4,6 +4,10 @@
 
 {% block network %} class="active"{% endblock %}
 
+{% block nav %}
+    <a href="{{ url_for("admin.network_detail", network_id=network.id) }}">&larr; back</a>
+{% endblock %}
+
 {% block content %}
     <h1 class="page-header">Add Sbunet</h1>
     <div class="form">

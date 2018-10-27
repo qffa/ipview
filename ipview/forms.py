@@ -1,3 +1,4 @@
+import re
 import ipaddress
 from flask import flash
 from flask_wtf import FlaskForm
@@ -194,6 +195,39 @@ class FilterForm(FlaskForm):
         validators=[Required(), Length(2, 64)]
         )
     submit = SubmitField("Submit")
+
+
+
+
+class HostForm(FlaskForm):
+    name = StringField(
+        "*Device Name",
+        validators=[Required(), Length(4, 128)]
+        )
+    mac_address = StringField(
+        "*MAC Address",
+        render_kw={"placeholder": "AA:BB:CC:11:22:33"},
+        validators=[Required(),]
+        )
+    description = StringField(
+        "Description",
+        validators=[Length(4, 128)]
+        )
+    owner = StringField(
+        "*Owner",
+        validators=[Required(), Length(4, 64)]
+        )
+    owner_email = StringField(
+        "*Owner E-Mail",
+        validators=[Required(), Email()]
+        )
+    submit = SubmitField("Submit")
+
+    def validate_mac_address(self, field):
+        if not re.match(r"^\s*([0-9a-fA-F]{2,2}:){5,5}[0-9a-fA-F]{2,2}\s*$", field.data):
+            raise ValidationError("MAC address format wrong")
+
+
 
 
 

@@ -3,6 +3,10 @@
 
 {% block network %} class="active"{% endblock %}
 
+{% block nav %}
+    <a href="{{ url_for("admin.network") }}">&larr; back</a>
+{% endblock %}
+
 {% block content %}
     <h1 class="page-header">Add Network</h1>
 
