@@ -84,7 +84,8 @@ class LoginForm(FlaskForm):
 class SiteForm(FlaskForm):
     name = StringField(
             "Site Name",
-            validators=[Required(), Length(4, 30)]
+            validators=[Required(), Length(4, 30)],
+            render_kw={"autofocus": ''}
             )
     description = TextAreaField(
             "Description",
@@ -103,8 +104,8 @@ class SiteForm(FlaskForm):
 class NetworkForm(FlaskForm):
     address = StringField(
         "Network Address",
-        render_kw={"placeholder": "10.0.0.0/8"},
-        validators=[Required(), Length(4, 60)]
+        render_kw={"placeholder": "10.0.0.0/8", "autofocus": ''},
+        validators=[Required(), Length(4, 60)],
     )
     description = TextAreaField(
         "Descrition",
@@ -126,7 +127,8 @@ class AddSubnetForm(FlaskForm):
     name = StringField(
         "*Subnet Name",
         validators=[Required(),
-        Length(4, 30)]
+        Length(4, 30)],
+        render_kw={"autofocus": ''}
         )
     address = StringField(
         "*Subnet Address",
@@ -202,7 +204,8 @@ class FilterForm(FlaskForm):
 class HostForm(FlaskForm):
     name = StringField(
         "*Device Name",
-        validators=[Required(), Length(4, 128)]
+        validators=[Required(), Length(4, 128)],
+        render_kw={"autofocus": ''}
         )
     mac_address = StringField(
         "*MAC Address",
