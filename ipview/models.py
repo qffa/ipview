@@ -65,7 +65,7 @@ class Network(Base):
 
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(64), nullable=False, unique=True)
-    address_pack = db.Column(db.BigInteger())
+    address_pack = db.Column(db.Float())
     description = db.Column(db.String(256), nullable=False)
 
     __mapper_args__ = {
@@ -83,7 +83,7 @@ class Subnet(Base):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
     address = db.Column(db.String(64), nullable=False, unique=True)
-    address_pack = db.Column(db.BigInteger())
+    address_pack = db.Column(db.Float())
     mask = db.Column(db.String(64))
     gateway = db.Column(db.String(64))
     dns1 = db.Column(db.String(64))

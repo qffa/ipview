@@ -45,7 +45,7 @@ def add_site():
             flash("success", "success")
         else:
             flash("failed to add site", "danger")
-        return redirect(parent_url or url_for("admin.site"))
+        return redirect(url_for("admin.site"))
     else:
         return render_template("admin/add_site.html", form=form)
 
@@ -104,7 +104,7 @@ def add_network():
     form = NetworkForm()
     if form.validate_on_submit():
         form.populate_obj(network)
-        network.address_pack = int(ipaddress.ip_network(network.address).network_address)
+        network.address_pack = float(int(ipaddress.ip_network(network.address).network_address))
         if network.save():
             network.log_event("Add a new network: {}".format(network.address))
             flash("network added successfully", "success")
@@ -171,7 +171,7 @@ def add_subnet_under(network_id):
     if form.validate_on_submit():
         form.populate_obj(subnet)
         subnet.network = network    # link to foreign key: network
-        subnet.address_pack = int(ipaddress.ip_network(subnet.address).network_address)
+        subnet.address_pack = float(int(ipaddress.ip_network(subnet.address).network_address))
         # after subnet created, write all its IP addresses into database IP table
         if subnet.save():  
             subnet_scope = ipaddress.ip_network(subnet.address)    # ip_network obj for this subnet
