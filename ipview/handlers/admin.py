@@ -54,8 +54,9 @@ def add_site():
 def site_detail(site_id):
     """display the subnets inside the site
     """
+    url = request.url
     site = Site.query.get_or_404(site_id)
-    return render_template("admin/site_detail.html", site=site)
+    return render_template("admin/site_detail.html", site=site, parent_url=url)
 
 
 @admin.route("/site/<int:site_id>/edit", methods=['GET', 'POST'])
@@ -147,7 +148,9 @@ def network_detail(network_id):
     """
 
     network = Network.query.get_or_404(network_id)
-    return render_template("admin/network_detail.html", network=network)
+    url = request.url
+    print(url)
+    return render_template("admin/network_detail.html", network=network, parent_url=url)
 
 
 ## subnet functions
@@ -208,6 +211,7 @@ def edit_subnet(subnet_id):
 def delete_subnet(subnet_id):
     """delete subnet and IP addresses in it.
     """
+    parent_url = request.args.get('next')
     subnet = Subnet.query.get_or_404(subnet_id)
     for ip in subnet.ips:
         db.session.delete(ip)
@@ -222,7 +226,7 @@ def delete_subnet(subnet_id):
     else:
         flash("subnet remove failed", "danger")
     
-    return redirect(url_for("admin.subnet"))
+    return redirect(parent_url or url_for("admin.network"))
 
 
 @admin.route("/<parent>/<int:parent_id>/subnet/<int:subnet_id>")

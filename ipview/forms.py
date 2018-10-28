@@ -133,7 +133,8 @@ class AddSubnetForm(FlaskForm):
     address = StringField(
         "*Subnet Address",
         render_kw={"placeholder": "10.10.1.0/24"},
-        validators=[Required(), Length(4, 60)]
+        validators=[Required(), Length(4, 60)],
+        description="*slow on big size subnet"
         )
     gateway = StringField(
         "Gateway",
@@ -161,7 +162,15 @@ class AddSubnetForm(FlaskForm):
         description="* 0 means not a VLAN",
         validators=[NumberRange(0, 4096)]
         )
-    submit = SubmitField("Submit")
+    submit = SubmitField(
+        "Submit",
+        render_kw={
+            "data-toggle": "modal",
+            "data-target": "#myModal",
+            "data-backdrop": "static",
+            "data-keyboard": "false"
+        }
+        )
 
     def validate_address(self, field):
         validate_tools.verify_ip_network(field.data)

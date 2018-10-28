@@ -10,7 +10,7 @@
 {% elif field.name == 'id' %}
     {{ '' }}
 {% elif field.type == 'SubmitField' %}
-	{{ form.submit(class="btn btn-primary", type="submit") }}
+	{{ form.submit(class="btn btn-primary", type="submit")}}
 {% else %}
 	<div class="form-group {% if field.errors %}has-error{% endif %}">
 		{{ field.label }}
@@ -31,7 +31,7 @@
 
 <!-- render subnet -->
 
-{% macro render_subnet(obj) %}
+{% macro render_subnet(obj, obj_url) %}
 
 {% if obj.address %}
     {% set parent = 'network' %}
@@ -63,7 +63,7 @@
                 <p class="action" id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     <li><a href="{{ url_for("admin.edit_subnet", subnet_id=subnet.id) }}">edit</a></li>
-                    <li><a href="{{ url_for("admin.delete_subnet", subnet_id=subnet.id) }}">delete</a></li>
+                    <li data-toggle="modal" data-target="#myModal" data-backdrop="static" data-keyboard="false"><a href="{{ url_for("admin.delete_subnet", subnet_id=subnet.id, next=obj_url) }}">delete</a></li>
                 </ul>
                 </div>
             
