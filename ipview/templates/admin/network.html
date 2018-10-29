@@ -4,7 +4,9 @@
 
 {% block content %}
     <h1 class="page-header">Netwok</h1>
-    <button type="button" clas="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Test loading</button>
+    <div style="text-align: right;">
+        <button type="button" clas="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Test loading</button>
+    </div>
     <div class="command-btn">
         <a type="button" class="btn btn-primary" href="{{ url_for("admin.add_network") }}">New Network( Supernet )</a>
     </div>

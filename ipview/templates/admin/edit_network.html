@@ -1,0 +1,20 @@
+{% extends "admin/admin_base.html" %}
+{% from "macros.html" import render_form %}
+
+{% block network %} class="active"{% endblock %}
+
+{% block nav %}
+    <a href="{{ url_for("admin.network") }}">&larr; back</a>
+
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">Edit Network</h1>
+
+    <div class="form">
+        {{ render_form(form, url_for("admin.edit_network", network_id=network_id)) }}
+    </div>
+
+
+
+{% endblock %}

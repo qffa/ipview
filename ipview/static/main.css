@@ -111,8 +111,9 @@ body {
  */
 
 .command-btn {
-  text-align: right;
-  margin-right: 50px;
+  text-align: left;
+  margin-left: 5px;
+  margin-bottom: 10px;
 }
 
 .form {
@@ -140,6 +141,9 @@ body {
 
 
 
+/*
+ * loading effect
+ */
 
 .spinner {
   margin: 100px auto;

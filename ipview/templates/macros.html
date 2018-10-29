@@ -31,9 +31,9 @@
 
 <!-- render subnet -->
 
-{% macro render_subnet(obj, obj_url) %}
+{% macro render_subnet(parent_obj, parent_url) %}
 
-{% if obj.address %}
+{% if parent_obj.address %}
     {% set parent = 'network' %}
 {% else %}
     {% set parent = 'site' %}
@@ -51,9 +51,9 @@
         </tr>
     </thead>
     <tbody>
-    {% for subnet in obj.subnets %}
+    {% for subnet in parent_obj.subnets %}
         <tr>
-            <td><a href="{{ url_for("admin.subnet_detail", parent=parent, parent_id=obj.id, subnet_id=subnet.id) }}">{{ subnet.address }}</a></td>
+            <td><a href="{{ url_for("admin.subnet_detail", parent=parent, parent_id=parent_obj.id, subnet_id=subnet.id) }}">{{ subnet.address }}</a></td>
             <td>{{ subnet.name }}</td>
             <td>{{ subnet.description }}</td>
             <td>{{ subnet.vlan }}</td>
@@ -62,8 +62,12 @@
                 <div class="dropdown">
                 <p class="action" id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li><a href="{{ url_for("admin.edit_subnet", subnet_id=subnet.id) }}">edit</a></li>
-                    <li data-toggle="modal" data-target="#myModal" data-backdrop="static" data-keyboard="false"><a href="{{ url_for("admin.delete_subnet", subnet_id=subnet.id, next=obj_url) }}">delete</a></li>
+                    <li>
+                        <a href="{{ url_for("admin.edit_subnet", subnet_id=subnet.id, next=parent_url) }}">edit</a>
+                    </li>
+                    <li data-toggle="modal" data-target="#myModal" data-backdrop="static" data-keyboard="false">
+                        <a href="{{ url_for("admin.delete_subnet", subnet_id=subnet.id, next=parent_url) }}">delete</a>
+                    </li>
                 </ul>
                 </div>
             

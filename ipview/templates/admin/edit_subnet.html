@@ -1,0 +1,24 @@
+{% extends "admin/admin_base.html" %}
+{% from "macros.html" import render_form %}
+
+{% block network %}
+    {% if "network" in parent_url %} class="active"{% endif %}
+{% endblock %}
+{% block site %}
+    {% if "site" in parent_url %} class="active" {% endif %}
+{% endblock %}
+
+{% block nav %}
+    <a href="{{ parent_url }}">&larr; back</a>
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">Edit Subnet</h1>
+
+    <div class="form">
+        {{ render_form(form, self_url) }}
+    </div>
+
+
+
+{% endblock %}

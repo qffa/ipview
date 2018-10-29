@@ -2,8 +2,8 @@ import re
 import ipaddress
 from flask import flash
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, IntegerField
-from wtforms.validators import Length, Email, EqualTo, Required, NumberRange
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, IntegerField, HiddenField
+from wtforms.validators import Length, Email, EqualTo, Required, NumberRange, MacAddress, IPAddress
 from ipview.models import db, Site, Network, Subnet, User
 
 
@@ -93,12 +93,9 @@ class SiteForm(FlaskForm):
             )
     submit = SubmitField("Submit")
 
-
-'''
-    def validate_site_name(self, field):
-        if Site.query.filter_by(site_name=field.data).first():
+    def validate_name(self, field):
+        if Site.query.filter_by(name=field.data).first():
             raise ValidationError("Site exists")
-'''
 
 
 class NetworkForm(FlaskForm):
@@ -123,11 +120,13 @@ class NetworkForm(FlaskForm):
 
 
 
-class AddSubnetForm(FlaskForm):
+class SubnetForm(FlaskForm):
+    network_id = HiddenField(       # transfer network id to subnet form
+        label = None
+        )
     name = StringField(
         "*Subnet Name",
-        validators=[Required(),
-        Length(4, 30)],
+        validators=[Required(), Length(4, 30)],
         render_kw={"autofocus": ''}
         )
     address = StringField(
@@ -138,15 +137,15 @@ class AddSubnetForm(FlaskForm):
         )
     gateway = StringField(
         "Gateway",
-        validators=[Length(0, 60),]
+        validators=[]
         )
     dns1 = StringField(
         "DNS1",
-        validators=[Length(0, 60)]
+        validators=[]
         )
     dns2 = StringField(
         "DNS2",
-        validators=[Length(0, 60)]
+        validators=[]
         )
     site_id = SelectField(
         "*Site", 
@@ -163,33 +162,37 @@ class AddSubnetForm(FlaskForm):
         validators=[NumberRange(0, 4096)]
         )
     submit = SubmitField(
-        "Submit",
-        render_kw={
-            "data-toggle": "modal",
-            "data-target": "#myModal",
-            "data-backdrop": "static",
-            "data-keyboard": "false"
-        }
+        "Submit"
         )
+
+    """
+    render_kw={
+        "data-toggle": "modal",
+        "data-target": "#myModal",
+        "data-backdrop": "static",
+        "data-keyboard": "false"
+    }
+    """
 
     def validate_address(self, field):
         validate_tools.verify_ip_network(field.data)
-        subnets = Subnet.query.all()    # need to narrow to this supernet
         this_subnet = ipaddress.ip_network(field.data)
+        n = Network.query.get_or_404(self.network_id.data)
+        parent_network = ipaddress.ip_network(n.address)
+        if this_subnet not in parent_network:
+            raise ValidationError("not in network {}".format(n.address))
+        subnets = Subnet.query.filter_by(network_id=self.network_id.data)    # need to narrow to this supernet
         for subnet in subnets:
             subnet = (ipaddress.ip_network(subnet.address))
             validate_tools.overlaps_ip_network(this_subnet, subnet)
-
-
     def validate_dns1(self, field):
         validate_tools.verify_ip_address(field.data) 
 
     def validate_dns2(self, field):
         validate_tools.verify_ip_address(field.data) 
-
     def validate_gateway(self, field):
         validate_tools.verify_ip_address(field.data)
-        if not field.data == '':
+        if field.data != '':
             ip = ipaddress.ip_address(field.data)
             subnet = ipaddress.ip_network(self.address.data)
             validate_tools.verify_ip_in_subnet(ip, subnet)
@@ -221,17 +224,17 @@ class HostForm(FlaskForm):
         render_kw={"placeholder": "AA:BB:CC:11:22:33"},
         validators=[Required(),]
         )
-    description = StringField(
-        "Description",
-        validators=[Length(4, 128)]
-        )
     owner = StringField(
         "*Owner",
         validators=[Required(), Length(4, 64)]
         )
     owner_email = StringField(
-        "*Owner E-Mail",
+        "*Owner E-mail",
         validators=[Required(), Email()]
+        )
+    description = TextAreaField(
+        "Description",
+        validators=[Length(4, 256)]
         )
     submit = SubmitField("Submit")
 

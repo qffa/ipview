@@ -2,6 +2,10 @@
 {% from "macros.html" import render_form %}
 
 {% block site %} class="active"{% endblock %}
+{% block nav %}
+    <a href="{{ url_for("admin.site") }}">&larr; back</a>
+{% endblock %}
+
 
 {% block content %}
     <h1 class="page-header">Edit Site</h1>

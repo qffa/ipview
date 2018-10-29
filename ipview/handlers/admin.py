@@ -1,8 +1,10 @@
 import ipaddress
+from sqlalchemy import and_
 from flask import Blueprint, render_template, url_for, redirect, flash, abort, request
-from ipview.forms import SiteForm, NetworkForm, AddSubnetForm, FilterForm, HostForm
+from ipview.forms import SiteForm, NetworkForm, SubnetForm, FilterForm, HostForm
 from ipview.models import db, Site, Network, Subnet, IP, Event, Host
 from flask_login import current_user
+from wtforms.validators import Required
 
 
 
@@ -63,6 +65,8 @@ def site_detail(site_id):
 def edit_site(site_id):
     site = Site.query.get_or_404(site_id)
     form = SiteForm(obj=site)
+    form.name.render_kw = {"readonly":''}
+#    form.name.validators = [Required(),]
     if form.validate_on_submit():
         form.populate_obj(site)
         site.save()
@@ -116,12 +120,21 @@ def add_network():
         return render_template("admin/add_network.html", form=form)
 
 
-@admin.route("/network/<int:network_id>/edit")
+@admin.route("/network/<int:network_id>/edit", methods=['GET', 'POST'])
 def edit_network(network_id):
     """edit the network by network id
     """
 
-    pass
+    network = Network.query.get_or_404(network_id)
+    form = NetworkForm(obj=network)
+    form.address.render_kw = {"readonly": ''}
+    form.validate_address = None
+    if form.validate_on_submit():
+        form.populate_obj(network)
+        network.save()
+        return redirect(url_for("admin.network"))
+    else:
+        return render_template("admin/edit_network.html", form=form, network_id=network_id)
 
 
 @admin.route("/network/<int:network_id>/delete")
@@ -169,7 +182,8 @@ def add_subnet_under(network_id):
     """
     subnet = Subnet()
     network = Network.query.get_or_404(network_id)
-    form = AddSubnetForm()
+    form = SubnetForm()
+    form.network_id.data = network_id
     form.site_id.choices = [(site.id, site.name) for site in Site.query.order_by('name')]
     if form.validate_on_submit():
         form.populate_obj(subnet)
@@ -200,11 +214,22 @@ def add_subnet_under(network_id):
         return render_template("/admin/add_subnet.html", form=form, network=network)
 
 
-@admin.route("/subnet/<int:subnet_id>/edit")
+@admin.route("/subnet/<int:subnet_id>/edit", methods=['GET', 'POST'])
 def edit_subnet(subnet_id):
     """edit the subnet
     """
-    pass
+    subnet = Subnet.query.get_or_404(subnet_id)
+    form = SubnetForm(obj=subnet)
+    form.site_id.choices = [(site.id, site.name) for site in Site.query.order_by('name')]
+    form.address.render_kw = {"readonly": ''}
+    self_url = request.url
+    parent_url = request.args.get('next')
+    if form.validate_on_submit():
+        form.populate_obj(subnet)
+        subnet.save()
+        return parent_url or url_for("admin.network")
+    else:
+        return render_template("admin/edit_subnet.html", form=form, self_url=self_url, parent_url=parent_url, subnet_id=subnet_id)
 
 
 @admin.route("/subnet/<int:subnet_id>/delete")
@@ -212,19 +237,22 @@ def delete_subnet(subnet_id):
     """delete subnet and IP addresses in it.
     """
     parent_url = request.args.get('next')
-    subnet = Subnet.query.get_or_404(subnet_id)
-    for ip in subnet.ips:
-        db.session.delete(ip)
-    try:
-        db.session.commit()
-    except:
-        db.session.rollback()
-        flash("IP addresses removed failed", "danger")
-    if subnet.delete():
-        subnet.log_event("Subnet {} is removed.".format(subnet.address))
-        flash("success", "success")
+    if IP.query.filter(and_(IP.subnet_id==subnet_id, IP.is_inuse==True)).first():
+        flash("please remove the host under this subnet firstly", "danger")
     else:
-        flash("subnet remove failed", "danger")
+        subnet = Subnet.query.get_or_404(subnet_id)
+        for ip in subnet.ips:
+            db.session.delete(ip)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            flash("IP addresses removed failed", "danger")
+        if subnet.delete():
+            subnet.log_event("Subnet {} is removed.".format(subnet.address))
+            flash("success", "success")
+        else:
+            flash("subnet remove failed", "danger")
     
     return redirect(parent_url or url_for("admin.network"))
 
@@ -249,11 +277,14 @@ def subnet_detail(parent, parent_id, subnet_id):
 def assign_ip(ip_id):
     """assign IP address to host
     """
+    parent_url = request.args.get('next')
     ip = IP.query.get_or_404(ip_id)
+    if ip.is_inuse:
+        flash("already assign to a host", "danger")
+        return redirect(parent_url)
     host = Host()
     form = HostForm()
     self_url = request.url
-    parent_url = request.args.get('next')
     if form.validate_on_submit():
         form.populate_obj(host)
         ip.is_inuse = True
@@ -272,8 +303,15 @@ def assign_ip(ip_id):
 def release_ip(ip_id):
     """release this IP address
     """
-
-    pass
+    parent_url = request.args.get('next')
+    ip = IP.query.get_or_404(ip_id)
+    if ip.host:
+        ip.host.delete()
+        ip.is_inuse = False
+        ip.save()
+        flash("IP released", "success")
+        
+    return redirect(parent_url)
 
 
 @admin.route("/ip/<int:ip_id>/edit")
