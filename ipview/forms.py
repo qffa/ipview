@@ -121,31 +121,24 @@ class NetworkForm(FlaskForm):
 
 
 class SubnetForm(FlaskForm):
-    network_id = HiddenField(       # transfer network id to subnet form
-        label = None
-        )
     name = StringField(
         "*Subnet Name",
-        validators=[Required(), Length(4, 30)],
+        validators=[Length(2, 30)],
         render_kw={"autofocus": ''}
         )
     address = StringField(
         "*Subnet Address",
         render_kw={"placeholder": "10.10.1.0/24"},
-        validators=[Required(), Length(4, 60)],
         description="*slow on big size subnet"
         )
     gateway = StringField(
         "Gateway",
-        validators=[]
         )
     dns1 = StringField(
         "DNS1",
-        validators=[]
         )
     dns2 = StringField(
         "DNS2",
-        validators=[]
         )
     site_id = SelectField(
         "*Site", 
@@ -162,24 +155,26 @@ class SubnetForm(FlaskForm):
         validators=[NumberRange(0, 4096)]
         )
     submit = SubmitField(
-        "Submit"
+        "Submit",
+        render_kw={
+            "data-toggle": "modal",
+            "data-target": "#myModal",
+            "data-backdrop": "static",
+            "data-keyboard": "false"
+        }
         )
 
-    """
-    render_kw={
-        "data-toggle": "modal",
-        "data-target": "#myModal",
-        "data-backdrop": "static",
-        "data-keyboard": "false"
-    }
-    """
+
+    network_id = HiddenField(       # transfer network id to subnet form
+        label = ''
+        )
 
     def validate_address(self, field):
         validate_tools.verify_ip_network(field.data)
         this_subnet = ipaddress.ip_network(field.data)
         n = Network.query.get_or_404(self.network_id.data)
         parent_network = ipaddress.ip_network(n.address)
-        if this_subnet not in parent_network:
+        if not this_subnet.subnet_of(parent_network):
             raise ValidationError("not in network {}".format(n.address))
         subnets = Subnet.query.filter_by(network_id=self.network_id.data)    # need to narrow to this supernet
         for subnet in subnets:

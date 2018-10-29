@@ -90,7 +90,7 @@ class Subnet(Base):
     dns2 = db.Column(db.String(64))
     description = db.Column(db.String(256), nullable=False)
     vlan = db.Column(db.SmallInteger, default=0)    # 0 means not a VLAN
-    netowrk_id = db.Column(db.Integer, db.ForeignKey('network.id'), nullable=False)
+    network_id = db.Column(db.Integer, db.ForeignKey('network.id'), nullable=False)
     network = db.relationship('Network', uselist=False, backref=db.backref('subnets'))
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'), nullable=False)
     site = db.relationship('Site', uselist=False, backref=db.backref('subnets'))
