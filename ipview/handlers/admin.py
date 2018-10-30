@@ -1,7 +1,7 @@
 import ipaddress
 from sqlalchemy import and_
 from flask import Blueprint, render_template, url_for, redirect, flash, abort, request
-from ipview.forms import SiteForm, NetworkForm, SubnetForm, FilterForm, HostForm
+from ipview.forms import SiteForm, NetworkForm, AddNetworkForm, SubnetForm, AddSubnetForm, FilterForm, HostForm
 from ipview.models import db, Site, Network, Subnet, IP, Event, Host
 from flask_login import current_user
 from wtforms.validators import Required
@@ -106,7 +106,7 @@ def add_network():
     """
 
     network = Network()
-    form = NetworkForm()
+    form = AddNetworkForm()
     if form.validate_on_submit():
         form.populate_obj(network)
         network.address_pack = float(int(ipaddress.ip_network(network.address).network_address))
@@ -182,7 +182,7 @@ def add_subnet_under(network_id):
     """
     subnet = Subnet()
     network = Network.query.get_or_404(network_id)
-    form = SubnetForm()
+    form = AddSubnetForm()
     form.network_id.data = network_id
     form.site_id.choices = [(site.id, site.name) for site in Site.query.order_by('name')]
     if form.validate_on_submit():
@@ -227,7 +227,7 @@ def edit_subnet(subnet_id):
     if form.validate_on_submit():
         form.populate_obj(subnet)
         subnet.save()
-        return parent_url or url_for("admin.network")
+        return redirect(parent_url or url_for("admin.network"))
     else:
         return render_template("admin/edit_subnet.html", form=form, self_url=self_url, parent_url=parent_url, subnet_id=subnet_id)
 
@@ -314,13 +314,27 @@ def release_ip(ip_id):
     return redirect(parent_url)
 
 
-@admin.route("/ip/<int:ip_id>/edit")
+@admin.route("/ip/<int:ip_id>/edit", methods=['GET', 'POST'])
 def edit_ip(ip_id):
     """edit the host info on this ip
     """
+    parent_url = request.args.get('next')
+    self_url = request.url
+    ip = IP.query.get_or_404(ip_id)
+    if not ip.is_inuse:
+        flash("please assign firslt", "danger")
+        return redirect(parent_url)
 
-    pass
-
+    form = HostForm(obj=ip.host)
+    if form.validate_on_submit():
+        form.populate_obj(ip.host)
+        if ip.host.save():
+            flash("host updated", "success")
+        else:
+            flash("failed to update host", "danger")
+        return redirect(parent_url or url_for("admin.network"))
+    else:
+        return render_template("admin/assign_ip.html", ip=ip, form=form, self_url=self_url, parent_url=parent_url)
 
 
 

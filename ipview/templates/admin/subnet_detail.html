@@ -51,8 +51,8 @@
                     <p class="action" id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <li><a href="{{ url_for("admin.assign_ip", ip_id=ip.id, next=parent_url) }}">assign</a></li>
-                        <li><a href="{{ url_for("admin.release_ip", ip_id=ip.id, next=parent_url) }}">release</a></li>
                         <li><a href="{{ url_for("admin.edit_ip", ip_id=ip.id, next=parent_url) }}">edit</a></li>
+                        <li><a href="{{ url_for("admin.release_ip", ip_id=ip.id, next=parent_url) }}">release</a></li>
                     </ul>
                     </div>
                 

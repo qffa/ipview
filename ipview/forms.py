@@ -122,6 +122,8 @@ class NetworkForm(FlaskForm):
         )
     submit = SubmitField("Submit")
 
+
+class AddNetworkForm(NetworkForm):
     def validate_address(self, field):
         try:
             ipaddress.ip_network(field.data)
@@ -133,7 +135,7 @@ class NetworkForm(FlaskForm):
             network = ipaddress.ip_network(network.address)
             if this_network.overlaps(network):
                 raise ValidationError("network conflict")
-
+    
 
 
 class SubnetForm(FlaskForm):
@@ -182,11 +184,23 @@ class SubnetForm(FlaskForm):
         }
         )
 
-
     network_id = HiddenField(       # transfer network id to subnet form
         label = ''
         )
 
+    def validate_gateway(self, field):
+        if field.data != '':
+            try:
+                ipaddress.ip_address(field.data)
+            except:
+                raise ValidationError("IP address format wrong")
+            ip = ipaddress.ip_address(field.data)
+            subnet = ipaddress.ip_network(self.address.data)
+            if ip not in subnet:
+                raise ValidationError("ip not in subnet")
+
+
+class AddSubnetForm(SubnetForm):
     def validate_address(self, field):
         try:
             ipaddress.ip_network(field.data)
@@ -202,18 +216,6 @@ class SubnetForm(FlaskForm):
             subnet = (ipaddress.ip_network(subnet.address))
             if this_subnet.overlaps(subnet):
                 raise ValidationError("subnet conflict")
-
-
-    def validate_gateway(self, field):
-        if field.data != '':
-            try:
-                ipaddress.ip_address(field.data)
-            except:
-                raise ValidationError("IP address format wrong")
-            ip = ipaddress.ip_address(field.data)
-            subnet = ipaddress.ip_network(self.address.data)
-            if ip not in subnet:
-                raise ValidationError("ip not in subnet")
 
 
 
