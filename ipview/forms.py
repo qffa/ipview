@@ -79,12 +79,22 @@ class LoginForm(FlaskForm):
             raise ValidationError("wrong password")
 
 
+class NameUnique(object):
+    def __init__(self, table, message=None):
+        self.table = table
+        if not message:
+            message = "name conflict"
+        self.message = message
+
+    def __call__(self, form, field):
+        if self.table.query.filter_by(name=field.data).first():
+            raise ValidationError(self.message)
 
 
 class SiteForm(FlaskForm):
     name = StringField(
             "Site Name",
-            validators=[Required(), Length(4, 30)],
+            validators=[Required(), Length(4, 30), NameUnique(Site)],
             render_kw={"autofocus": ''}
             )
     description = TextAreaField(
@@ -93,9 +103,6 @@ class SiteForm(FlaskForm):
             )
     submit = SubmitField("Submit")
 
-    def validate_name(self, field):
-        if Site.query.filter_by(name=field.data).first():
-            raise ValidationError("Site exists")
 
 
 class NetworkForm(FlaskForm):
@@ -176,7 +183,7 @@ class SubnetForm(FlaskForm):
         parent_network = ipaddress.ip_network(n.address)
         if not this_subnet.subnet_of(parent_network):
             raise ValidationError("not in network {}".format(n.address))
-        subnets = Subnet.query.filter_by(network_id=self.network_id.data)    # need to narrow to this supernet
+        subnets = Subnet.query.filter_by(network_id=self.network_id.data)
         for subnet in subnets:
             subnet = (ipaddress.ip_network(subnet.address))
             validate_tools.overlaps_ip_network(this_subnet, subnet)

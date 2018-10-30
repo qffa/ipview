@@ -66,7 +66,7 @@ def edit_site(site_id):
     site = Site.query.get_or_404(site_id)
     form = SiteForm(obj=site)
     form.name.render_kw = {"readonly":''}
-#    form.name.validators = [Required(),]
+    form.name.validators = []
     if form.validate_on_submit():
         form.populate_obj(site)
         site.save()
