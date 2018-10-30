@@ -3,39 +3,57 @@ import ipaddress
 from flask import flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, IntegerField, HiddenField
-from wtforms.validators import Length, Email, EqualTo, Required, NumberRange, MacAddress, IPAddress
+from wtforms.validators import Length, Email, EqualTo, Required, NumberRange, MacAddress
 from ipview.models import db, Site, Network, Subnet, User
 
 
-class validate_tools():
 
-    @staticmethod
-    def verify_ip_address(ip):
-        if not ip == '':
+
+"""
+validation class
+"""
+
+class NameUniqueIn(object):
+    def __init__(self, table, message=None):
+        self.table = table
+        if not message:
+            message = "name conflict"
+        self.message = message
+
+    def __call__(self, form, field):
+        if self.table.query.filter_by(name=field.data).first():
+            raise ValidationError(self.message)
+
+class IPAddress(object):
+    def __init__(self, message=None):
+        if not message:
+            message = "wrong IP format"
+        self.message = message
+
+    def __call__(self, form, field):
+        if field.data != '':
             try:
-                ipaddress.ip_address(ip)
+                ipaddress.ip_address(field.data)
             except:
-                raise ValidationError("wrong IP format!")
+                raise ValidationError(self.message)
+        
+class NetworkAddress(object):
+    def __init__(self, message=None):
+        if not message:
+            message = "wrong subnet format"
+        self.message = message
 
-    @staticmethod
-    def verify_ip_network(network):
+    def __call__(self, form, field):
         try:
-            ipaddress.ip_network(network)
+            ipaddress.ip_network(field.data)
         except:
-            raise ValidationError("wrong subnet format!")
-
-    @staticmethod
-    def overlaps_ip_network(network, other_network):
-        if network.overlaps(other_network):
-            raise ValidationError("subnet conflict")
+            raise ValidationError(self.message)
 
 
-    @staticmethod
-    def verify_ip_in_subnet(ip, subnet):
-        if ip not in subnet:
-            raise ValidationError("Gateway is not in the subnet.")
 
-
+"""
+form class
+"""
 
 class LoginForm(FlaskForm):
     username = StringField(
@@ -65,7 +83,6 @@ class LoginForm(FlaskForm):
             )
 
 
-
     def validate_username(self, field):
         if field.data and not User.query.filter_by(username=field.data).first():
             flash("User does not exist.", "danger")
@@ -79,22 +96,11 @@ class LoginForm(FlaskForm):
             raise ValidationError("wrong password")
 
 
-class NameUnique(object):
-    def __init__(self, table, message=None):
-        self.table = table
-        if not message:
-            message = "name conflict"
-        self.message = message
-
-    def __call__(self, form, field):
-        if self.table.query.filter_by(name=field.data).first():
-            raise ValidationError(self.message)
-
 
 class SiteForm(FlaskForm):
     name = StringField(
             "Site Name",
-            validators=[Required(), Length(4, 30), NameUnique(Site)],
+            validators=[Required(), Length(4, 30), NameUniqueIn(Site)],
             render_kw={"autofocus": ''}
             )
     description = TextAreaField(
@@ -109,7 +115,6 @@ class NetworkForm(FlaskForm):
     address = StringField(
         "Network Address",
         render_kw={"placeholder": "10.0.0.0/8", "autofocus": ''},
-        validators=[Required(), Length(4, 60)],
     )
     description = TextAreaField(
         "Descrition",
@@ -118,12 +123,16 @@ class NetworkForm(FlaskForm):
     submit = SubmitField("Submit")
 
     def validate_address(self, field):
-        validate_tools.verify_ip_network(field.data)
-        networks = Network.query.all()
+        try:
+            ipaddress.ip_network(field.data)
+        except:
+            raise ValidationError("network address format wrong")
         this_network = ipaddress.ip_network(field.data)
+        networks = Network.query.all()
         for network in networks:
             network = ipaddress.ip_network(network.address)
-            validate_tools.overlaps_ip_network(this_network, network)
+            if this_network.overlaps(network):
+                raise ValidationError("network conflict")
 
 
 
@@ -143,9 +152,11 @@ class SubnetForm(FlaskForm):
         )
     dns1 = StringField(
         "DNS1",
+        validators=[IPAddress()]
         )
     dns2 = StringField(
         "DNS2",
+        validators=[IPAddress()]
         )
     site_id = SelectField(
         "*Site", 
@@ -177,7 +188,10 @@ class SubnetForm(FlaskForm):
         )
 
     def validate_address(self, field):
-        validate_tools.verify_ip_network(field.data)
+        try:
+            ipaddress.ip_network(field.data)
+        except:
+            raise ValidationError("network address format wrong")
         this_subnet = ipaddress.ip_network(field.data)
         n = Network.query.get_or_404(self.network_id.data)
         parent_network = ipaddress.ip_network(n.address)
@@ -186,18 +200,20 @@ class SubnetForm(FlaskForm):
         subnets = Subnet.query.filter_by(network_id=self.network_id.data)
         for subnet in subnets:
             subnet = (ipaddress.ip_network(subnet.address))
-            validate_tools.overlaps_ip_network(this_subnet, subnet)
-    def validate_dns1(self, field):
-        validate_tools.verify_ip_address(field.data) 
+            if this_subnet.overlaps(subnet):
+                raise ValidationError("subnet conflict")
 
-    def validate_dns2(self, field):
-        validate_tools.verify_ip_address(field.data) 
+
     def validate_gateway(self, field):
-        validate_tools.verify_ip_address(field.data)
         if field.data != '':
+            try:
+                ipaddress.ip_address(field.data)
+            except:
+                raise ValidationError("IP address format wrong")
             ip = ipaddress.ip_address(field.data)
             subnet = ipaddress.ip_network(self.address.data)
-            validate_tools.verify_ip_in_subnet(ip, subnet)
+            if ip not in subnet:
+                raise ValidationError("ip not in subnet")
 
 
 
@@ -224,7 +240,7 @@ class HostForm(FlaskForm):
     mac_address = StringField(
         "*MAC Address",
         render_kw={"placeholder": "AA:BB:CC:11:22:33"},
-        validators=[Required(),]
+        validators=[Required(), MacAddress()]
         )
     owner = StringField(
         "*Owner",
@@ -240,9 +256,6 @@ class HostForm(FlaskForm):
         )
     submit = SubmitField("Submit")
 
-    def validate_mac_address(self, field):
-        if not re.match(r"^\s*([0-9a-fA-F]{2,2}:){5,5}[0-9a-fA-F]{2,2}\s*$", field.data):
-            raise ValidationError("MAC address format wrong")
 
 
 
