@@ -2,13 +2,13 @@
 
 {% block title %}IPView{% endblock %}
 
-{% block newrequest %} class="active"{% endblock %}
+{% block new_request %} class="active"{% endblock %}
 
 {% block content %}
 <h1 class="page-header">New Request</h1>
     <ul class="request">
     <li>
-        <a href="#">
+        <a href="{{ url_for("request.create") }}">
             <img src="{{ url_for("static", filename="me.svg") }}" width="150" height="150" alt="Request IP for myself">
         </a>
         <p>request for me</p>

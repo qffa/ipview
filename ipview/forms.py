@@ -261,5 +261,14 @@ class HostForm(FlaskForm):
 
 
 
+class SelectSiteForm(FlaskForm):
+    site_id = SelectField(
+        "please select your site", 
+        coerce=int,
+        validators=[Required()]
+        )
+
+    submit = SubmitField("Submit")
+
 
 

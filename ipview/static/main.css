@@ -145,7 +145,6 @@ body {
 .request li {
   list-style-type: none;
   display: inline-block;
-  max-width: 170px;
 }
 
 .request li p {
