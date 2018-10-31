@@ -6,6 +6,19 @@
 
 {% block content %}
 <h1 class="page-header">New Request</h1>
-
+    <ul class="request">
+    <li>
+        <a href="#">
+            <img src="{{ url_for("static", filename="me.svg") }}" width="150" height="150" alt="Request IP for myself">
+        </a>
+        <p>request for me</p>
+    </li>
+    <li>
+        <a href="#">
+            <img src="{{ url_for("static", filename="other.svg") }}" width="150" height="150" alt="Request IP for other">
+        </a>
+        <p>request for other</p>
+    </li>
+    </ul>
 
 {% endblock %}
