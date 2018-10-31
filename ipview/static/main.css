@@ -134,11 +134,13 @@ body {
   margin-right: 5px;
 }
 
-
 .action {
   margin: 0 0;
 }
 
+.alert {
+  color: red;
+}
 
 
 /*

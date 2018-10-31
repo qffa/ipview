@@ -336,8 +336,15 @@ def edit_ip(ip_id):
     else:
         return render_template("admin/assign_ip.html", ip=ip, form=form, self_url=self_url, parent_url=parent_url)
 
+@admin.route("/ip/<int:ip_id>/detail")
+def detail_ip(ip_id):
+    """display host detail on this IP address
+    """
+    parent_url = request.args.get('next')
+    self_url = request.url
+    ip = IP.query.get_or_404(ip_id)
 
-
+    return render_template("admin/ip_detail.html", ip=ip, parent_url=parent_url)
 
 
 
