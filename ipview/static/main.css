@@ -158,11 +158,17 @@ body {
 
 .level2-menu li {
   list-style-type: none;
-  padding: 3px 0px 3px 40px;
+  padding: 9px 0px 9px 40px;
 }
 
 .level2-menu li a {
   text-decoration: none;
+  display: block;
+}
+
+.level2-menu li:focus, .level2-menu li:hover {
+  text-decoration: none;
+  background-color: #eee;
 }
 
 .myactive {

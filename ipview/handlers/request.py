@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request
 from ipview.forms import SelectSiteForm
 from ipview.models import db, Site, Host, Subnet
 

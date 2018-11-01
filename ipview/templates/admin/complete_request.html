@@ -1,0 +1,16 @@
+{% extends "admin/admin_base.html" %}
+{% from "macros.html" import render_form %}
+
+{% block complete_request %} class="myactive"{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">Completed Request</h1>
+
+
+<script>
+    document.getElementById("sub_request").classList.add("in")
+</script>
+
+{% endblock %}
+
+

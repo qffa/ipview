@@ -22,6 +22,23 @@ def index():
 	return redirect(url_for("admin.network"))
 
 
+## request functions
+
+@admin.route("/request/waiting")
+def waiting_request():
+    """display all waiting requests
+    """
+
+    return render_template("admin/waiting_request.html")
+
+@admin.route("/request/complete")
+def complete_request():
+    """complete request
+    """
+
+    return render_template("admin/complete_request.html")
+
+
 ## site functions
 
 @admin.route("/site")
