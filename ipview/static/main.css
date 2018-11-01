@@ -151,6 +151,28 @@ body {
   text-align: center;
 }
 
+.level2-menu {
+  margin: 3px 0px 3px 0px;
+  padding: 0 0;
+}
+
+.level2-menu li {
+  list-style-type: none;
+  padding: 3px 0px 3px 40px;
+}
+
+.level2-menu li a {
+  text-decoration: none;
+}
+
+.myactive {
+  background-color: #428bca;
+}
+
+.myactive a {
+  color: white;
+}
+
 
 /*
  * loading effect

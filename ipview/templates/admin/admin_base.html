@@ -8,10 +8,14 @@
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             <ul class="nav nav-sidebar">
-                <li{% block request %}{% endblock %}><a href="#">Requests</a></li>
-                <li{% block network %}{% endblock %}><a href="{{ url_for("admin.network") }}">Network</a></li>
-                <li{% block site %}{% endblock %}><a href="{{ url_for("admin.site") }}">Site</a></li>
-                <li{% block log %}{% endblock %}><a href="{{ url_for("admin.log") }}">Audit Log</a></li>
+                <li onclick="active_request()" id="request" {% block request %}{% endblock %}><a data-toggle="collapse" href="#sub_request">Requests</a></li>
+                    <ul class="collapse level2-menu" id="sub_request">
+                        <li><a href="#">waiting</a></li>
+                        <li class="myactive"><a href="#">complete</a></li>
+                    </ul>
+                <li id="network" {% block network %}{% endblock %}><a href="{{ url_for("admin.network") }}">Network</a></li>
+                <li id="site" {% block site %}{% endblock %}><a href="{{ url_for("admin.site") }}">Site</a></li>
+                <li id="log" {% block log %}{% endblock %}><a href="{{ url_for("admin.log") }}">Audit Log</a></li>
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -32,6 +36,15 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+function active_request() {
+    document.getElementById("request").setAttribute("class", "active");
+    document.getElementById("network").setAttribute("class", "");
+    document.getElementById("site").setAttribute("class", "");
+    document.getElementById("log").setAttribute("class", "");
+}
+</script>
 {% endblock %}
 
 

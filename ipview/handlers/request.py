@@ -19,7 +19,7 @@ def new():
 def create():
     if request.args.get("subnet"):
         pass
-    elif request.args.get("site")
+    elif request.args.get("site"):
         form = SelectSubnetForm()
         form.subnet_id.choices = [(subnet.id, "{}({})".format(subnet.name, subnet.address)) for site in Subnet.query.order_by("name")]
         if form.validate_on_submit():
