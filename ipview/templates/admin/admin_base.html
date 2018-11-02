@@ -12,8 +12,12 @@
                     <a data-toggle="collapse" href="#sub_request">Requests</a>
                 </li>
                 <ul class="collapse level2-menu" id="sub_request">
-                    <li id="waiting_request" {% block waiting_request %}{% endblock %}><a href="{{ url_for("admin.waiting_request") }}">waiting</a></li>
-                    <li id="complete_request" {% block complete_request %}{% endblock %}><a href="{{ url_for("admin.complete_request") }}">complete</a></li>
+                    <li class="level2-menu-list-action" id="waiting_request">
+                        <a href="{{ url_for("admin.waiting_request") }}">waiting</a>
+                    </li>
+                    <li class="level2-menu-list-action" id="complete_request">
+                        <a href="{{ url_for("admin.complete_request") }}">complete</a>
+                    </li>
                 </ul>
                 <li id="network" {% block network %}{% endblock %}><a href="{{ url_for("admin.network") }}">Network</a></li>
                 <li id="site" {% block site %}{% endblock %}><a href="{{ url_for("admin.site") }}">Site</a></li>
@@ -42,11 +46,11 @@
 <script type="text/javascript">
 function active_request() {
     document.getElementById("request").setAttribute("class", "active");
-    document.getElementById("network").setAttribute("class", "");
-    document.getElementById("site").setAttribute("class", "");
-    document.getElementById("log").setAttribute("class", "");
-    document.getElementById("waiting_request").setAttribute("class", "");
-    document.getElementById("complete_request").setAttribute("class", "");
+    document.getElementById("network").classList.remove("active");
+    document.getElementById("site").classList.remove("active");
+    document.getElementById("log").classList.remove("active");
+    document.getElementById("waiting_request").setAttribute("class", "level2-menu-list-action");
+    document.getElementById("complete_request").setAttribute("class", "level2-menu-list-action");
 }
 </script>
 {% endblock %}

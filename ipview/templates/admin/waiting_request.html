@@ -1,7 +1,6 @@
 {% extends "admin/admin_base.html" %}
 {% from "macros.html" import render_form %}
 
-{% block waiting_request %} class="myactive"{% endblock %}
 
 {% block content %}
     <h1 class="page-header">Waiting Request</h1>
@@ -9,6 +8,7 @@
 
 <script>
     document.getElementById("sub_request").classList.add("in")
+    document.getElementById("waiting_request").setAttribute("class", "level2-menu-active")
 </script>
 
 {% endblock %}

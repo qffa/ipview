@@ -138,18 +138,26 @@ body {
   margin: 0 0;
 }
 
-.alert {
-  color: red;
-}
 
-.request li {
-  list-style-type: none;
+.request {
   display: inline-block;
+  padding: 5px;
 }
 
-.request li p {
+.request p {
   text-align: center;
 }
+
+.request-button {
+  border: solid 1px #ccc;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.request-button:hover {
+  background-color: #f5f5f5;
+}
+
 
 .level2-menu {
   margin: 3px 0px 3px 0px;
@@ -166,16 +174,20 @@ body {
   display: block;
 }
 
-.level2-menu li:focus, .level2-menu li:hover {
+
+.level2-menu-list-action {
+}
+
+.level2-menu-list-action:focus, .level2-menu-list-action:hover {
   text-decoration: none;
   background-color: #eee;
 }
 
-.myactive {
+.level2-menu-active {
   background-color: #428bca;
 }
 
-.myactive a {
+.level2-menu-active a {
   color: white;
 }
 
