@@ -7,16 +7,16 @@
 {% block content %}
 <h1 class="page-header">New Request</h1>
 <p style="font-size: 16px;">Request IP address from IPView system</p>
-    <div class="request">
-        <div class="request-button">
+    <div class="request-item">
+        <div class="request-icon">
             <a href="{{ url_for("request.create", owner="self") }}">
                 <img src="{{ url_for("static", filename="me.svg") }}" width="150" height="150" alt="Request IP for myself">
             </a>
         </div>
         <p>request for myself</p>
     </div>
-    <div class="request">
-        <div class="request-button">
+    <div class="request-item">
+        <div class="request-icon">
             <a href="#">
                 <img src="{{ url_for("static", filename="other.svg") }}" width="150" height="150" alt="Request IP for other">
             </a>

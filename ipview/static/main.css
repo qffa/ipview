@@ -213,24 +213,49 @@ body {
 
 /* user page request module */
 
-.request {
+.request-item {
   display: inline-block;
   padding: 5px;
 }
 
-.request p {
+.request-item p {
   text-align: center;
 }
 
-.request-button {
+.request-icon {
   border: solid 1px #ccc;
   border-radius: 20px;
   text-align: center;
 }
 
-.request-button:hover {
+.request-icon:hover {
   background-color: #f5f5f5;
 }
+
+
+/* request form */
+
+.request-form {
+
+}
+
+.request-form > .page-btn{
+  padding: 0 0;
+  margin-top: 60px;
+}
+
+.request-form > .page-btn > .left {
+  float: left;
+  list-style: none;
+}
+
+.request-form > .page-btn > .right {
+  float: right;
+  list-style: none;
+}
+
+
+
 
 
 /* nav-sidebar level2 menu */
