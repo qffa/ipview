@@ -4,9 +4,6 @@
 
 {% block content %}
     <h1 class="page-header">Netwok</h1>
-    <div style="text-align: right;">
-        <button type="button" clas="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Test loading</button>
-    </div>
     <div class="command-btn">
         <a type="button" class="btn btn-default" href="{{ url_for("admin.add_network") }}">New Network( Supernet )</a>
     </div>
@@ -37,5 +34,11 @@
         {% endfor %}
         </tbody>
     </table>
+
+    <!--
+    <div>
+        <button type="button" clas="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Test loading</button>
+    </div>
+    -->
 
 {% endblock %}

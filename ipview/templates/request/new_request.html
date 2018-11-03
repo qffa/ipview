@@ -6,10 +6,10 @@
 
 {% block content %}
 <h1 class="page-header">New Request</h1>
-<h2>Request IP address from system</h2>
+<p style="font-size: 16px;">Request IP address from IPView system</p>
     <div class="request">
         <div class="request-button">
-            <a href="{{ url_for("request.create") }}">
+            <a href="{{ url_for("request.create", owner="self") }}">
                 <img src="{{ url_for("static", filename="me.svg") }}" width="150" height="150" alt="Request IP for myself">
             </a>
         </div>

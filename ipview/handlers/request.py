@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for
+from flask import request as http_request
 from ipview.forms import SelectSiteForm
 from ipview.models import db, Site, Host, Subnet
 
@@ -17,9 +18,9 @@ def new():
 
 @request.route('/create', methods=['GET', 'POST'])
 def create():
-    if request.args.get("subnet"):
+    if http_request.args.get("subnet"):
         pass
-    elif request.args.get("site"):
+    elif http_request.args.get("site"):
         form = SelectSubnetForm()
         form.subnet_id.choices = [(subnet.id, "{}({})".format(subnet.name, subnet.address)) for site in Subnet.query.order_by("name")]
         if form.validate_on_submit():

@@ -1,6 +1,7 @@
 import ipaddress
 from sqlalchemy import and_
-from flask import Blueprint, render_template, url_for, redirect, flash, abort, request
+from flask import Blueprint, render_template, url_for, redirect, flash, abort
+from flask import request as http_request
 from ipview.forms import SiteForm, NetworkForm, AddNetworkForm, SubnetForm, AddSubnetForm, FilterForm, HostForm
 from ipview.models import db, Site, Network, Subnet, IP, Event, Host
 from flask_login import current_user
@@ -22,11 +23,11 @@ def index():
 	return redirect(url_for("admin.network"))
 
 
-## request functions
+## request.functions
 
 @admin.route("/request/waiting")
 def waiting_request():
-    """display all waiting requests
+    """display all waiting request.
     """
 
     return render_template("admin/waiting_request.html")
@@ -73,7 +74,7 @@ def add_site():
 def site_detail(site_id):
     """display the subnets inside the site
     """
-    url = request.url
+    url = http_request.url
     site = Site.query.get_or_404(site_id)
     return render_template("admin/site_detail.html", site=site, parent_url=url)
 
@@ -126,7 +127,9 @@ def add_network():
     form = AddNetworkForm()
     if form.validate_on_submit():
         form.populate_obj(network)
-        network.address_pack = float(int(ipaddress.ip_network(network.address).network_address))
+        ip_obj = ipaddress.ip_network(network.address)
+        network.address = ip_obj.compressed
+        network.address_pack = float(int(ip_obj.network_address))
         if network.save():
             network.log_event("Add a new network: {}".format(network.address))
             flash("network added successfully", "success")
@@ -178,7 +181,7 @@ def network_detail(network_id):
     """
 
     network = Network.query.get_or_404(network_id)
-    url = request.url
+    url = http_request.url
     print(url)
     return render_template("admin/network_detail.html", network=network, parent_url=url)
 
@@ -205,7 +208,9 @@ def add_subnet_under(network_id):
     if form.validate_on_submit():
         form.populate_obj(subnet)
         subnet.network = network    # link to foreign key: network
-        subnet.address_pack = float(int(ipaddress.ip_network(subnet.address).network_address))
+        ip_obj = ipaddress.ip_network(subnet.address)
+        subnet.address = ip_obj.compressed
+        subnet.address_pack = float(int(ip_obj.network_address))
         # after subnet created, write all its IP addresses into database IP table
         if subnet.save():  
             subnet_scope = ipaddress.ip_network(subnet.address)    # ip_network obj for this subnet
@@ -239,8 +244,8 @@ def edit_subnet(subnet_id):
     form = SubnetForm(obj=subnet)
     form.site_id.choices = [(site.id, site.name) for site in Site.query.order_by('name')]
     form.address.render_kw = {"readonly": ''}
-    self_url = request.url
-    parent_url = request.args.get('next')
+    self_url = http_request.url
+    parent_url = http_request.args.get('next')
     if form.validate_on_submit():
         form.populate_obj(subnet)
         subnet.save()
@@ -253,7 +258,7 @@ def edit_subnet(subnet_id):
 def delete_subnet(subnet_id):
     """delete subnet and IP addresses in it.
     """
-    parent_url = request.args.get('next')
+    parent_url = http_request.args.get('next')
     if IP.query.filter(and_(IP.subnet_id==subnet_id, IP.is_inuse==True)).first():
         flash("please remove the host under this subnet firstly", "danger")
     else:
@@ -283,7 +288,7 @@ def subnet_detail(parent, parent_id, subnet_id):
     elif parent == 'site':
         parent_obj = Site.query.get_or_404(parent_id)
     subnet = Subnet.query.get_or_404(subnet_id)
-    url = request.url
+    url = http_request.url
     return render_template("admin/subnet_detail.html", parent=parent, subnet=subnet, parent_url=url)
 
 
@@ -294,14 +299,14 @@ def subnet_detail(parent, parent_id, subnet_id):
 def assign_ip(ip_id):
     """assign IP address to host
     """
-    parent_url = request.args.get('next')
+    parent_url = http_request.args.get('next')
     ip = IP.query.get_or_404(ip_id)
     if ip.is_inuse:
         flash("already assign to a host", "danger")
         return redirect(parent_url)
     host = Host()
     form = HostForm()
-    self_url = request.url
+    self_url = http_request.url
     if form.validate_on_submit():
         form.populate_obj(host)
         ip.is_inuse = True
@@ -320,7 +325,7 @@ def assign_ip(ip_id):
 def release_ip(ip_id):
     """release this IP address
     """
-    parent_url = request.args.get('next')
+    parent_url = http_request.args.get('next')
     ip = IP.query.get_or_404(ip_id)
     if ip.host:
         ip.host.delete()
@@ -335,8 +340,8 @@ def release_ip(ip_id):
 def edit_ip(ip_id):
     """edit the host info on this ip
     """
-    parent_url = request.args.get('next')
-    self_url = request.url
+    parent_url = http_request.args.get('next')
+    self_url = http_request.url
     ip = IP.query.get_or_404(ip_id)
     if not ip.is_inuse:
         flash("please assign firslt", "danger")
@@ -357,8 +362,8 @@ def edit_ip(ip_id):
 def detail_ip(ip_id):
     """display host detail on this IP address
     """
-    parent_url = request.args.get('next')
-    self_url = request.url
+    parent_url = http_request.args.get('next')
+    self_url = http_request.url
     ip = IP.query.get_or_404(ip_id)
 
     return render_template("admin/ip_detail.html", ip=ip, parent_url=parent_url)

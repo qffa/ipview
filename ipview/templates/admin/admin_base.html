@@ -12,10 +12,10 @@
                     <a data-toggle="collapse" href="#sub_request">Requests</a>
                 </li>
                 <ul class="collapse level2-menu" id="sub_request">
-                    <li class="level2-menu-list-action" id="waiting_request">
+                    <li class="level2-menu-item" id="waiting_request">
                         <a href="{{ url_for("admin.waiting_request") }}">waiting</a>
                     </li>
-                    <li class="level2-menu-list-action" id="complete_request">
+                    <li class="level2-menu-item" id="complete_request">
                         <a href="{{ url_for("admin.complete_request") }}">complete</a>
                     </li>
                 </ul>
@@ -49,8 +49,8 @@ function active_request() {
     document.getElementById("network").classList.remove("active");
     document.getElementById("site").classList.remove("active");
     document.getElementById("log").classList.remove("active");
-    document.getElementById("waiting_request").setAttribute("class", "level2-menu-list-action");
-    document.getElementById("complete_request").setAttribute("class", "level2-menu-list-action");
+    document.getElementById("waiting_request").setAttribute("class", "level2-menu-item");
+    document.getElementById("complete_request").setAttribute("class", "level2-menu-item");
 }
 </script>
 {% endblock %}
