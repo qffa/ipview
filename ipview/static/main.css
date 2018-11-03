@@ -177,7 +177,7 @@ body {
 
 
 /* -------------
- * New added
+ * New added by qffa
  * -------------
  */
 
@@ -211,6 +211,8 @@ body {
 }
 
 
+/* user page request module */
+
 .request {
   display: inline-block;
   padding: 5px;
@@ -231,6 +233,8 @@ body {
 }
 
 
+/* nav-sidebar level2 menu */
+
 .level2-menu {
   margin: 3px 0px 3px 0px;
   padding: 0 0;
@@ -246,21 +250,20 @@ body {
   display: block;
 }
 
-
-.level2-menu-item {
-}
-
-.level2-menu-item:focus, .level2-menu-item:hover {
+.level2-menu li:focus, 
+.level2-menu li:hover {
   text-decoration: none;
   background-color: #eee;
 }
 
-.level2-menu-item-active {
+.level2-menu > .active,
+.level2-menu > .active:hover ,
+.level2-menu > .active:focus {
   background-color: #428bca;
 }
 
-.level2-menu-item-active a {
-  color: white;
+.level2-menu > .active > a {
+  color: #fff;
 }
 
 
