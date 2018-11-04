@@ -1,0 +1,26 @@
+{% extends "request/request_base.html" %}
+
+{% block title %}IPView{% endblock %}
+
+{% block new_request %} class="active"{% endblock %}
+
+{% block content %}
+<h1 class="page-header">Create Request</h1>
+<p>Step 1(Total 4 stpes)</p>
+<div class="panel panel-default form">
+    <div class="panel-body">
+        <form class="request-form" method="POST" action="{{ url }}">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                {{ form.site_id.label }}
+                {{ form.site_id(class="form-control") }}
+            </div>
+            <ul class="page-btn">
+                <li class="left"><a class="btn btn-default" href="#">previous</a></li>
+                <li class="right">{{ form.submit(class="btn btn-default", type="submit", value="next") }}</li>
+            </ul>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

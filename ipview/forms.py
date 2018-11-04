@@ -272,3 +272,12 @@ class SelectSiteForm(FlaskForm):
 
 
 
+class SelectSubnetForm(FlaskForm):
+    subnet_id = SelectField(
+        "please select the subnet your need", 
+        coerce=int,
+        validators=[Required()]
+        )
+
+    submit = SubmitField("Submit")
+

@@ -17,7 +17,7 @@
     </div>
     <div class="request-item">
         <div class="request-icon">
-            <a href="#">
+            <a href="{{ url_for("request.create", owner="other") }}">
                 <img src="{{ url_for("static", filename="other.svg") }}" width="150" height="150" alt="Request IP for other">
             </a>
         </div>

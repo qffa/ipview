@@ -6,17 +6,21 @@
 
 {% block content %}
 <h1 class="page-header">Create Request</h1>
-<p>Step 1(Total 4 stpes)</p>
+<p>Step 3(Total 4 stpes)</p>
 <div class="panel panel-default form">
     <div class="panel-body">
-        <form class="request-form" method="POST" action="#">
+        <form class="request-form" method="POST" action="{{ url_for("request.create") }}">
             {{ form.csrf_token }}
             <div class="form-group">
-                {{ form.site_id.label }}
-                {{ form.site_id(class="form-control") }}
+                {{ form.name.label }}
+                {{ form.name(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.mac_address.label }}
+                {{ form.mac_address(class="form-control") }}
             </div>
             <ul class="page-btn">
-                <li class="left"><a class="btn btn-default" href="#">previous</a></li>
+                <li class="left"><a class="btn btn-default" href="{{ url[:url.rfind("&")] }}">previous</a></li>
                 <li class="right">{{ form.submit(class="btn btn-default", type="submit", value="next") }}</li>
             </ul>
         </form>
