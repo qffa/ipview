@@ -3,7 +3,7 @@ from sqlalchemy import and_
 from flask import Blueprint, render_template, url_for, redirect, flash, abort
 from flask import request as http_request
 from ipview.forms import SiteForm, NetworkForm, AddNetworkForm, SubnetForm, AddSubnetForm, FilterForm, HostForm
-from ipview.models import db, Site, Network, Subnet, IP, Event, Host
+from ipview.models import db, Site, Network, Subnet, IP, Event, Host, Request, Host
 from flask_login import current_user
 from wtforms.validators import Required
 
@@ -27,17 +27,31 @@ def index():
 
 @admin.route("/request/waiting")
 def waiting_request():
-    """display all waiting request.
+    """display all waiting requests.
     """
-
-    return render_template("admin/waiting_request.html")
+    hosts = Host.query.filter_by(status=Host.STATUS_REQUESTING).all()
+    return render_template("admin/waiting_request.html", hosts=hosts)
 
 @admin.route("/request/complete")
 def complete_request():
-    """complete request
+    """display all completed requests
     """
 
     return render_template("admin/complete_request.html")
+
+@admin.route("/request/approve/<int:host_id>")
+def approve_request(host_id):
+    """approve the request, and assign IP to host
+    """
+
+    pass
+
+@admin.route("/request/reject/<int:host_id>")
+def reject_request(host_id):
+    """reject the request
+    """
+
+    pass
 
 
 ## site functions
@@ -182,7 +196,6 @@ def network_detail(network_id):
 
     network = Network.query.get_or_404(network_id)
     url = http_request.url
-    print(url)
     return render_template("admin/network_detail.html", network=network, parent_url=url)
 
 
@@ -246,6 +259,8 @@ def edit_subnet(subnet_id):
     form.address.render_kw = {"readonly": ''}
     self_url = http_request.url
     parent_url = http_request.args.get('next')
+    if subnet.is_requestable:
+        form.is_requestable.deault = "checked"
     if form.validate_on_submit():
         form.populate_obj(subnet)
         subnet.save()
@@ -363,13 +378,20 @@ def detail_ip(ip_id):
     """display host detail on this IP address
     """
     parent_url = http_request.args.get('next')
-    self_url = http_request.url
+    #self_url = http_request.url
     ip = IP.query.get_or_404(ip_id)
 
     return render_template("admin/ip_detail.html", ip=ip, parent_url=parent_url)
 
 
+@admin.route("/host/<int:host_id>/detail")
+def detail_host(host_id):
+    """dispaly host detail info
+    """
+    parent_url = http_request.args.get("next")
+    host = Host.query.get_or_404(host_id)
 
+    return render_template("admin/host_detail.html", host=host, parent_url=parent_url)
 
 
 

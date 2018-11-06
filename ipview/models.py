@@ -94,6 +94,7 @@ class Subnet(Base):
     network = db.relationship('Network', uselist=False, backref=db.backref('subnets'))
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'), nullable=False)
     site = db.relationship('Site', uselist=False, backref=db.backref('subnets'))
+    is_requestable = db.Column(db.Boolean, default=False)    ## allow user to request IP from this subnet
 
 
     __mapper_args__ = {
@@ -122,17 +123,40 @@ class IP(Base):
 class Host(Base):
     __tablename__ = 'host'
 
+    STATUS_REQUESTING = 10
+    STATUS_REJECTED = 20
+    STATUS_ASSIGNED = 30
+    STATUS_RELEASED = 40
+
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False, unique=True)
+    hostname = db.Column(db.String(64), nullable=False, unique=True)
     mac_address = db.Column(db.String(32), nullable=False, unique=True)
     description = db.Column(db.String(256), nullable=False)
     owner = db.Column(db.String(32), nullable=False)
     owner_email = db.Column(db.String(64), nullable=False)
     ip_id = db.Column(db.Integer, db.ForeignKey("ip.id"))
     ip = db.relationship('IP', uselist=False)
+    request_subnet_id = db.Column(db.Integer, db.ForeignKey("subnet.id"))
+    request_subnet = db.relationship("Subnet", uselist=False)
+    request = db.relationship("Request", uselist=False)
+    status = db.Column(db.SmallInteger, default=STATUS_REQUESTING)
+    remark = db.Column(db.String(512))
 
     def __repr__(self):
-        return '<Host: {}>'.format(self.name)
+        return '<Host: {}>'.format(self.hostname)
+
+
+    def is_requesting(self):
+        return self.status == self.STATUS_REQUESTING
+
+    def is_rejected(self):
+        return self.status == self.STATUS_REJECTED
+
+    def is_assigned(self):
+        return self.status == self.STATUS_ASSIGNED
+
+    def is_released(self):
+        return self.status == self.STATUS_RELEASED
 
 
 class User(Base, UserMixin):
@@ -173,19 +197,16 @@ class User(Base, UserMixin):
 class Request(Base):
     __tablename__ = "request"
 
-    STATUS_REQUESTING = 10
-    STATUS_APPROVED = 20
-    STATUS_REJECTED = 30
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(32), nullable=False)             # username of requester
-    status = db.Column(db.SmallInteger, default=STATUS_REQUESTING)
-    host = db.Column(db.Integer, db.ForeignKey("host.id"))
-    subnet = db.Column(db.Integer, db.ForeignKey("subnet.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))             # username of requester
+    user = db.relationship("User", uselist=False)
+    host_id = db.Column(db.Integer, db.ForeignKey("host.id")) 
+    host = db.relationship("Host", uselist=False) 
 
 
     def __repr__(self):
-        return '<request: {}>'.format(self.host.name)
+        return '<request: {}>'.format(self.host.hostname)
 
 
 

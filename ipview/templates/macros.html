@@ -9,6 +9,12 @@
 	{{ '' }}
 {% elif field.name == 'id' %}
     {{ '' }}
+{% elif field.type == 'BooleanField' %}
+    <div class="checkbox">
+        <label>
+        {{ field }}<span>{{ field.label.text }}</span>
+        </label>
+    </div>
 {% elif field.type == 'SubmitField' %}
 	{{ form.submit(class="btn btn-primary", type="submit")}}
 {% else %}

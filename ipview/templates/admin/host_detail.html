@@ -1,47 +1,39 @@
 {% extends "admin/admin_base.html" %}
 
-{% block network %}
-    {% if 'network' in parent_url %} class="active"{% endif %}
-{% endblock %}
-
-{% block site %}
-    {% if 'site' in parent_url %} class="active"{% endif %}
-{% endblock %}
 
 {% block nav %}
     <a href="{{ parent_url }}">&larr; back</a>
 {% endblock %}
 
 {% block content %}
-    <h1 class="page-header">IP: {{ ip.address }}</h1>
-    {% if not ip.is_inuse %}<p style="color: red;">unassigned</p>{% endif %}
+    <h1 class="page-header">Host Detail</h1>
     <h2>Host Detail</h2>
     <div class="col-lg-6 col-md-9 col-sm-12">
     <table class="table text-nowrap table-condensed">
         <tbody>
             <tr>
                 <td>hostname</td>
-                <td>{{ ip.host.hostname }}</td>
+                <td>{{ host.hostname }}</td>
             </tr>
             <tr>
                 <td>MAC address</td>
-                <td>{{ ip.host.mac_address }}</td>
+                <td>{{ host.mac_address }}</td>
             </tr>
             <tr>
                 <td>owner</td>
-                <td>{{ ip.host.owner }}</td>
+                <td>{{ host.owner }}</td>
             </tr>
             <tr>
                 <td>owner e-mail</td>
-                <td>{{ ip.host.owner_email }}</td>
+                <td>{{ host.owner_email }}</td>
             </tr>
             <tr>
                 <td>status</td>
-                <td>{{ ip.host.name }}</td>
+                <td>{{ host.status }}</td>
             </tr>
             <tr>
                 <td>desriptiion</td>
-                <td>{{ ip.host.description }}</td>
+                <td>{{ host.description }}</td>
             </tr>
         </tbody>
     </table>

@@ -174,6 +174,10 @@ class SubnetForm(FlaskForm):
         description="* 0 means not a VLAN",
         validators=[NumberRange(0, 4096)]
         )
+    is_requestable = BooleanField(
+        "allow user to request IP address from this subnet"
+        )
+
     submit = SubmitField(
         "Submit",
         render_kw={
@@ -234,7 +238,7 @@ class FilterForm(FlaskForm):
 
 
 class HostForm(FlaskForm):
-    name = StringField(
+    hostname = StringField(
         "*Device Name",
         validators=[Required(), Length(4, 128)],
         render_kw={"autofocus": ''}
@@ -255,6 +259,9 @@ class HostForm(FlaskForm):
     description = TextAreaField(
         "Description",
         validators=[Length(4, 256)]
+        )
+    remark = TextAreaField(
+        "Change log",
         )
     submit = SubmitField("Submit")
 

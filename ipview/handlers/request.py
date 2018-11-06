@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for
 from flask import request as http_request
+from flask_login import current_user
+from sqlalchemy import and_
 from ipview.forms import SelectSiteForm, SelectSubnetForm, HostForm
-from ipview.models import db, Site, Host, Subnet
+from ipview.models import db, Site, Host, Subnet, Request
 
 
 request = Blueprint('request', __name__, url_prefix="/request")
@@ -19,17 +21,29 @@ def new():
 @request.route('/create', methods=['GET', 'POST'])
 def create():
     url = http_request.url
-    if http_request.args.get("subnet"):
+    if http_request.args.get("subnet"):     ## step 3
         form = HostForm()
+        owner = http_request.args.get("owner")
+        if owner == "self":
+            owner = current_user
+            form.owner.data = current_user.username
+            form.owner_email.data = current_user.email
         if form.validate_on_submit():
-            pass
+            host = Host()
+            request = Request()
+            form.populate_obj(host)
+            host.request_subnet_id = http_request.args.get("subnet")
+            host.save()
+            request.user_id = current_user.id
+            request.host_id = host.id
+            request.save()
+            return("successful!")
         else:
             return render_template("request/create_request_step3.html", form=form, url=url)
-        pass
-    elif http_request.args.get("site"):
+    elif http_request.args.get("site"):     ## step 2
         form = SelectSubnetForm()
         form.subnet_id.choices = [
-                (subnet.id, "{}({})".format(subnet.name, subnet.address)) for subnet in Subnet.query.filter_by(site_id=http_request.args.get("site")).order_by("name")
+                (subnet.id, "{}({})".format(subnet.name, subnet.address)) for subnet in Subnet.query.filter(and_(Subnet.is_requestable==True, Subnet.site_id==http_request.args.get("site"))).order_by("name")
                 ]
         if form.validate_on_submit():
             subnet_id = form.subnet_id.data
@@ -37,7 +51,7 @@ def create():
 
         else:
             return render_template("request/create_request_step2.html", form=form, url=url)
-    else:
+    else:   ## step 1
         form = SelectSiteForm()
         form.site_id.choices = [(site.id, site.name) for site in Site.query.order_by("name")]
         if form.validate_on_submit():
@@ -49,7 +63,8 @@ def create():
 
 @request.route('/history')
 def history():
-	return render_template("request/hist_request.html")
+    requests = Request.query.filter_by(user_id=current_user.id).all()
+    return render_template("request/hist_request.html", requests=requests)
 
 
 

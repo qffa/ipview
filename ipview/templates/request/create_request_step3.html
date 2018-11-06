@@ -9,19 +9,31 @@
 <p>Step 3(Total 4 stpes)</p>
 <div class="panel panel-default form">
     <div class="panel-body">
-        <form class="request-form" method="POST" action="{{ url_for("request.create") }}">
+        <form class="request-form" method="POST" action="{{ url }}">
             {{ form.csrf_token }}
             <div class="form-group">
-                {{ form.name.label }}
-                {{ form.name(class="form-control") }}
+                {{ form.hostname.label }}
+                {{ form.hostname(class="form-control") }}
             </div>
             <div class="form-group">
                 {{ form.mac_address.label }}
                 {{ form.mac_address(class="form-control") }}
             </div>
+            <div class="form-group">
+                {{ form.owner.label }}
+                {{ form.owner(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.owner_email.label }}
+                {{ form.owner_email(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.description.label }}
+                {{ form.description(class="form-control") }}
+            </div>
             <ul class="page-btn">
                 <li class="left"><a class="btn btn-default" href="{{ url[:url.rfind("&")] }}">previous</a></li>
-                <li class="right">{{ form.submit(class="btn btn-default", type="submit", value="next") }}</li>
+                <li class="right">{{ form.submit(class="btn btn-default", type="submit", value="subnet") }}</li>
             </ul>
         </form>
     </div>

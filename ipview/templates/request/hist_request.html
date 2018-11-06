@@ -8,4 +8,26 @@
 <h1 class="page-header">Request History</h1>
 
 
+<table class="table table-hover text-nowrap table-condensed">
+    <thead>
+        <tr>
+            <th>Hostname</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>IP Info</th>
+
+        </tr>
+    </thead>
+    <tbody>
+    {% for request in requests %}
+        <tr>
+            <td><a href="#">{{ request.host.hostname }}</a></td>
+            <td>{{ request.host.description }}</td>
+            <td>{{ request.host.status }}</td>
+            <td>{{ request.host.ip.address }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}
