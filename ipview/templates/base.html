@@ -54,6 +54,9 @@
 
         <script src={{ url_for('static', filename="jquery.min.js") }}></script>
         <script src={{ url_for('static', filename="bootstrap.min.js") }}></script>
+
+        {% block script %}{% endblock %}
+
     </body>
 
 </html>

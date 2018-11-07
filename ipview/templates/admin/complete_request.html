@@ -6,11 +6,14 @@
     <h1 class="page-header">Completed Request</h1>
 
 
-<script>
-    document.getElementById("sub_request").classList.add("in")
-    document.getElementById("complete_request").classList.add("active")
-</script>
 
 {% endblock %}
 
 
+{% block script %}
+{{ super() }}
+<script>
+    document.getElementById("sub_request").classList.add("in")
+    document.getElementById("complete_request").classList.add("active")
+</script>
+{% endblock %}

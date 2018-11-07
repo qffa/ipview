@@ -40,11 +40,16 @@
 
 
 
+
+{% endblock %}
+
+
+{% block script %}
+{{ super() }}
 <script>
     document.getElementById("sub_request").classList.add("in")
     document.getElementById("waiting_request").classList.add("active")
 </script>
-
 {% endblock %}
 
 
