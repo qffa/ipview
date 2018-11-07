@@ -10,6 +10,10 @@ request = Blueprint('request', __name__, url_prefix="/request")
 
 
 
+@request.route('/test')
+def test():
+    return render_template("request/create_request_success.html")
+
 @request.route('/')
 def index():
 	return redirect(url_for("request.new"))
@@ -37,7 +41,7 @@ def create():
             request.user_id = current_user.id
             request.host_id = host.id
             request.save()
-            return("successful!")
+            return render_template("request/create_request_success.html")
         else:
             return render_template("request/create_request_step3.html", form=form, url=url)
     elif http_request.args.get("site"):     ## step 2
