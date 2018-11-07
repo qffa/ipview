@@ -9,5 +9,29 @@
 
 {% block content %}
     <h1 class="page-header">{{ site.name }}</h1>
-    {{ render_subnet(site, parent_url) }}
+
+
+    <table class="table table-hover text-nowrap table-condensed">
+        <thead>
+            <tr>
+                <th>Subnet Address</th>
+                <th>Subnet Name</th>
+                <th>Network</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for subnet in site.subnets %}
+            <tr>
+                <td><a href="{{ url_for("admin.subnet_detail", parent="site", parent_id=site.id, subnet_id=subnet.id) }}">{{ subnet.address }}</a></td>
+                <td>{{ subnet.name }}</td>
+                <td>{{ subnet.network.address }}</td>
+                <td>{{ subnet.description }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
 {% endblock %}

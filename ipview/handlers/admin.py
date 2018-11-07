@@ -88,9 +88,8 @@ def add_site():
 def site_detail(site_id):
     """display the subnets inside the site
     """
-    url = http_request.url
     site = Site.query.get_or_404(site_id)
-    return render_template("admin/site_detail.html", site=site, parent_url=url)
+    return render_template("admin/site_detail.html", site=site)
 
 
 @admin.route("/site/<int:site_id>/edit", methods=['GET', 'POST'])
@@ -195,8 +194,7 @@ def network_detail(network_id):
     """
 
     network = Network.query.get_or_404(network_id)
-    url = http_request.url
-    return render_template("admin/network_detail.html", network=network, parent_url=url)
+    return render_template("admin/network_detail.html", network=network)
 
 
 ## subnet functions
@@ -257,27 +255,27 @@ def edit_subnet(subnet_id):
     form = SubnetForm(obj=subnet)
     form.site_id.choices = [(site.id, site.name) for site in Site.query.order_by('name')]
     form.address.render_kw = {"readonly": ''}
-    self_url = http_request.url
-    parent_url = http_request.args.get('next')
     if subnet.is_requestable:
         form.is_requestable.deault = "checked"
     if form.validate_on_submit():
         form.populate_obj(subnet)
         subnet.save()
-        return redirect(parent_url or url_for("admin.network"))
+        return redirect(url_for("admin.network_detail", network_id=subnet.network.id))
     else:
-        return render_template("admin/edit_subnet.html", form=form, self_url=self_url, parent_url=parent_url, subnet_id=subnet_id)
+        return render_template("admin/edit_subnet.html", form=form, subnet=subnet)
 
 
 @admin.route("/subnet/<int:subnet_id>/delete")
 def delete_subnet(subnet_id):
     """delete subnet and IP addresses in it.
     """
-    parent_url = http_request.args.get('next')
+    subnet = Subnet.query.get_or_404(subnet_id)
+    network = subnet.network
     if IP.query.filter(and_(IP.subnet_id==subnet_id, IP.is_inuse==True)).first():
         flash("please remove the host under this subnet firstly", "danger")
+    elif subnet.request_hosts:
+        flash("delete failed. someone is requesting IP from this subnet", "danger")
     else:
-        subnet = Subnet.query.get_or_404(subnet_id)
         for ip in subnet.ips:
             db.session.delete(ip)
         try:
@@ -291,7 +289,7 @@ def delete_subnet(subnet_id):
         else:
             flash("subnet remove failed", "danger")
     
-    return redirect(parent_url or url_for("admin.network"))
+    return redirect(url_for("admin.network_detail", network_id=network.id))
 
 
 @admin.route("/<parent>/<int:parent_id>/subnet/<int:subnet_id>")
@@ -326,8 +324,9 @@ def assign_ip(ip_id):
         form.populate_obj(host)
         ip.is_inuse = True
         host.ip = ip
+        host.status = Host.STATUS_ASSIGNED
         if ip.save() and host.save():
-            host.log_event("Assign IP {} to host {}".format(ip.address, host.name))
+            host.log_event("Assign IP {} to host {}".format(ip.address, host.hostname))
             flash("IP assigned", "success")
         else:
             flash("failed to assign this IP", "danger")
@@ -342,9 +341,11 @@ def release_ip(ip_id):
     """
     parent_url = http_request.args.get('next')
     ip = IP.query.get_or_404(ip_id)
-    if ip.host:
-        ip.host.delete()
+    if ip.is_inuse:
         ip.is_inuse = False
+        ip.host.ip_id = None
+        ip.host.status = Host.STATUS_RELEASED
+        ip.host.save()
         ip.save()
         flash("IP released", "success")
         

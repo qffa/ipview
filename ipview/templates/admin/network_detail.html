@@ -12,5 +12,44 @@
     <div class="command-btn">
         <a type="button" class="btn btn-default" href="{{ url_for("admin.add_subnet_under", network_id=network.id) }}">Add Subnet</a>
     </div>
-    {{ render_subnet(network, parent_url) }}
+
+
+    <table class="table table-hover text-nowrap table-condensed">
+        <thead>
+            <tr>
+                <th>Subnet Address</th>
+                <th>Subnet Name</th>
+                <th>Description</th>
+                <th>Site</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for subnet in network.subnets %}
+            <tr>
+                <td><a href="{{ url_for("admin.subnet_detail", parent="network", parent_id=network.id, subnet_id=subnet.id) }}">{{ subnet.address }}</a></td>
+                <td>{{ subnet.name }}</td>
+                <td>{{ subnet.description }}</td>
+                <td>{{ subnet.site.name }}</td>
+                <td>
+                    <div class="dropdown">
+                    <p class="action" id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li>
+                            <a href="{{ url_for("admin.edit_subnet", subnet_id=subnet.id) }}">edit</a>
+                        </li>
+                        <li data-toggle="modal" data-target="#myModal" data-backdrop="static" data-keyboard="false">
+                            <a href="{{ url_for("admin.delete_subnet", subnet_id=subnet.id) }}">delete</a>
+                        </li>
+                    </ul>
+                    </div>
+                
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
 {% endblock %}

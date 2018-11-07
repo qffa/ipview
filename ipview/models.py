@@ -27,6 +27,7 @@ class Base(db.Model):
 
     def delete(self):
         db.session.delete(self)
+        db.session.commit()
         try:
             db.session.commit()
         except:
@@ -129,15 +130,15 @@ class Host(Base):
     STATUS_RELEASED = 40
 
     id = db.Column(db.Integer, primary_key=True)
-    hostname = db.Column(db.String(64), nullable=False, unique=True)
-    mac_address = db.Column(db.String(32), nullable=False, unique=True)
+    hostname = db.Column(db.String(64), nullable=False, unique=False)
+    mac_address = db.Column(db.String(32), nullable=False, unique=False)
     description = db.Column(db.String(256), nullable=False)
     owner = db.Column(db.String(32), nullable=False)
     owner_email = db.Column(db.String(64), nullable=False)
     ip_id = db.Column(db.Integer, db.ForeignKey("ip.id"))
     ip = db.relationship('IP', uselist=False)
     request_subnet_id = db.Column(db.Integer, db.ForeignKey("subnet.id"))
-    request_subnet = db.relationship("Subnet", uselist=False)
+    request_subnet = db.relationship("Subnet", uselist=False, backref=db.backref("request_hosts"))
     request = db.relationship("Request", uselist=False)
     status = db.Column(db.SmallInteger, default=STATUS_REQUESTING)
     remark = db.Column(db.String(512))

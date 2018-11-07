@@ -9,14 +9,14 @@
 {% endblock %}
 
 {% block nav %}
-    <a href="{{ parent_url }}">&larr; back</a>
+    <a href="{{ url_for("admin.network_detail", network_id=subnet.network.id) }}">&larr; back</a>
 {% endblock %}
 
 {% block content %}
     <h1 class="page-header">Edit Subnet</h1>
 
     <div class="form">
-        {{ render_form(form, self_url) }}
+        {{ render_form(form, url_for("admin.edit_subnet", subnet_id=subnet.id)) }}
     </div>
 
 

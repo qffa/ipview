@@ -36,7 +36,8 @@
             <tr>
                 <th>IP Address</th>
                 <th>Inuse</th>
-                <th>Host</th>
+                <th>Hostname</th>
+                <th>Host Description</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -45,7 +46,8 @@
             <tr>
                 <td><a href="{{ url_for("admin.detail_ip", ip_id=ip.id, next=parent_url) }}">{{ ip.address }}</a></td>
                 <td>{{ ip.is_inuse }}</td>
-                <td>{{ ip.host.name }}</td>
+                <td>{{ ip.host.hostname }}</td>
+                <td>{{ ip.host.description }}</td>
                 <td>
                     <div class="dropdown">
                     <p class="action" id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
