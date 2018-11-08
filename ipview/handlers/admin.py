@@ -1,3 +1,11 @@
+"""
+File: admin.py
+Author: qffa
+Description: admin view function
+
+"""
+
+
 import ipaddress
 from sqlalchemy import and_
 from flask import Blueprint, render_template, url_for, redirect, flash, abort

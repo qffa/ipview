@@ -1,3 +1,11 @@
+"""
+File: request.py
+Author: qffa
+Description: request view functions
+
+"""
+
+
 from flask import Blueprint, render_template, redirect, url_for
 from flask import request as http_request
 from flask_login import current_user
@@ -12,6 +20,9 @@ request = Blueprint('request', __name__, url_prefix="/request")
 
 @request.route('/test')
 def test():
+    """
+    for dev test page
+    """
     return render_template("request/create_request_success.html")
 
 @request.route('/')
@@ -20,10 +31,14 @@ def index():
 
 @request.route('/new')
 def new():
+    """display new request page
+    """
     return render_template("request/new_request.html")
 
 @request.route('/create', methods=['GET', 'POST'])
 def create():
+    """create new request
+    """
     url = http_request.url
     if http_request.args.get("subnet"):     ## step 3
         form = HostForm()
@@ -67,6 +82,8 @@ def create():
 
 @request.route('/history')
 def history():
+    """display request history
+    """
     requests = Request.query.filter_by(user_id=current_user.id).all()
     url = http_request.url
     return render_template("request/hist_request.html", requests=requests, parent_url=url)

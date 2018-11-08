@@ -1,3 +1,10 @@
+"""
+File: setting.py
+Author: qffa
+Description: setting view functions
+
+"""
+
 from flask import Blueprint, render_template, redirect, url_for
 
 
