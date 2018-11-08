@@ -21,9 +21,9 @@
     <tbody>
     {% for request in requests %}
         <tr>
-            <td><a href="#">{{ request.host.hostname }}</a></td>
+            <td><a href="{{ url_for("request.host_detail", host_id=request.host.id, next=parent_url) }}">{{ request.host.hostname }}</a></td>
             <td>{{ request.host.description }}</td>
-            <td>{{ request.host.status }}</td>
+            <td>{{ request.host.status|request_status }}</td>
             <td>{{ request.host.ip.address }}</td>
         </tr>
     {% endfor %}

@@ -18,7 +18,7 @@ front = Blueprint('front', __name__)
 @login_required
 def index():
     if current_user.is_admin:
-        return redirect(url_for("admin.network"))
+        return redirect(url_for("admin.waiting_request"))
     else:
         return redirect(url_for("request.new"))
 

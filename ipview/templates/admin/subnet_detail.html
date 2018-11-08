@@ -44,7 +44,7 @@
         <tbody>
         {% for ip in subnet.ips %}
             <tr>
-                <td><a href="{{ url_for("admin.detail_ip", ip_id=ip.id, next=parent_url) }}">{{ ip.address }}</a></td>
+                <td><a href="{{ url_for("admin.ip_detail", ip_id=ip.id, next=parent_url) }}">{{ ip.address }}</a></td>
                 <td>{{ ip.is_inuse }}</td>
                 <td>{{ ip.host.hostname }}</td>
                 <td>{{ ip.host.description }}</td>

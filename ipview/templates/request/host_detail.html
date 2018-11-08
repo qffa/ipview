@@ -1,5 +1,6 @@
-{% extends "admin/admin_base.html" %}
+{% extends "request/request_base.html" %}
 
+{% block hist_request %} class="active"{% endblock %}
 
 {% block nav %}
     <a href="{{ parent_url }}">&larr; back</a>
@@ -29,30 +30,26 @@
             </tr>
             <tr>
                 <td>status</td>
-                <td>{{ host.status|request_status }}</td>
+                <td>{{ host.status }}</td>
             </tr>
             <tr>
                 <td>desriptiion</td>
                 <td>{{ host.description }}</td>
             </tr>
             <tr>
-                <td>change log</td>
-                <td>{{ host.remark }}</td>
+                <td>IP Info</td>
+                <td>
+                    {% if host.is_assigned() %}
+                    <p>IP address: {{ host.ip.address }}</p>
+                    <p>Mask: {{ host.ip.subnet.netmask.compressed }}</p>
+                    <p>Gateway: {{ host.ip.subnet.gateway }}</p>
+                    <p>DNS1: {{ host.ip.subnet.dns1 }}</p>
+                    <p>DNS2: {{ host.ip.subnet.dns2 }}</p>
+                    {% endif %}
+                </td>
             </tr>
         </tbody>
     </table>
     </div>
 
-{% endblock %}
-
-{% block script %}
-    {{ super() }}
-    <script>
-        document.getElementById("sub_request").classList.add("in")
-        {% if "waiting" in parent_url %}
-        document.getElementById("waiting_request").classList.add("active")
-        {% elif "complete" in parent_url %}
-        document.getElementById("complete_request").classList.add("active")
-        {% endif %}
-    </script>
 {% endblock %}

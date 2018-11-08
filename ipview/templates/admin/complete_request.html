@@ -5,6 +5,31 @@
 {% block content %}
     <h1 class="page-header">Completed Request</h1>
 
+    <table class="table table-hover text-nowrap table-condensed">
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Description</th>
+                <th>owner</th>
+                <th>IP Address</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for host in hosts %}
+        {% if host.request.user %}
+            <tr>
+                <td><a href="{{ url_for("admin.host_detail", host_id=host.id, next=parent_url) }}">{{ host.hostname }}</a></td>
+                <td>{{ host.description }}</td>
+                <td>{{ host.owner }}</td>
+                <td>{% if host.ip %}{{ host.ip.address }}{% endif %}</td>
+                <td>{{ host.status|request_status }}</td>
+            </tr>
+        {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+
 
 
 {% endblock %}

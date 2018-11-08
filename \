@@ -40,7 +40,7 @@ def complete_request():
     url = http_request.url
     hosts = Host.query.filter(Host.status!=Host.STATUS_REQUESTING).all()
 
-    return render_template("admin/complete_request.html", hosts=hosts, parent_url=url)
+    return render_template("admin/complete_request.html")
 
 @admin.route("/request/approve/<int:host_id>")
 def approve_request(host_id):
@@ -53,13 +53,8 @@ def approve_request(host_id):
 def reject_request(host_id):
     """reject the request
     """
-    host = Host.query.get_or_404(host_id)
-    host.status = Host.STATUS_REJECTED
-    host.request_subnet = None
 
-    host.save()
-
-    return redirect(url_for("admin.waiting_request"))
+    pass
 
 
 ## site functions

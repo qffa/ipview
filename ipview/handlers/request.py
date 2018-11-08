@@ -68,10 +68,19 @@ def create():
 @request.route('/history')
 def history():
     requests = Request.query.filter_by(user_id=current_user.id).all()
-    return render_template("request/hist_request.html", requests=requests)
+    url = http_request.url
+    return render_template("request/hist_request.html", requests=requests, parent_url=url)
 
 
 
+@request.route("/host/<int:host_id>/detail")
+def host_detail(host_id):
+    """dispaly host detail info
+    """
+    parent_url = http_request.args.get("next")
+    host = Host.query.get_or_404(host_id)
+
+    return render_template("request/host_detail.html", host=host, parent_url=parent_url)
 
 
 
