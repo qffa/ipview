@@ -188,9 +188,6 @@ body {
   margin-bottom: 10px;
 }
 
-.form {
-  max-width: 400px;
-}
 
 .message {
   margin: 2px 10px 2px 10px;
@@ -215,6 +212,11 @@ body {
 .action {
   margin: 0 0;
 }
+
+.no-margin {
+  margin: 0 0;
+}
+
 
 
 /* user page request module */

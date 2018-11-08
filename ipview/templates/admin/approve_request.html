@@ -1,0 +1,27 @@
+{% extends "admin/admin_base.html" %}
+{% from "macros.html" import render_form %}
+
+{% block nav %}
+    <a href="{{ url_for("admin.waiting_request") }}">&larr; back</a>
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">Waiting Request</h1>
+    <p>host: {{ host.hostname }}</p>
+
+    <div class="col-lg-4 col-md-6 col-sm-9 col-xs-12">
+        {{ render_form(form, url_for("admin.approve_request", host_id=host.id)) }}
+    </form>
+
+{% endblock %}
+
+
+{% block script %}
+{{ super() }}
+<script>
+    document.getElementById("sub_request").classList.add("in")
+    document.getElementById("waiting_request").classList.add("active")
+</script>
+{% endblock %}
+
+

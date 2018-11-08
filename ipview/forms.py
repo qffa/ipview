@@ -288,3 +288,14 @@ class SelectSubnetForm(FlaskForm):
 
     submit = SubmitField("Submit")
 
+
+class AssignIPForm(FlaskForm):
+    ip_id = SelectField(
+        "assign IP",
+        coerce=int,
+        validators=[Required()]
+        )
+
+    submit = SubmitField("Submit")
+
+

@@ -43,6 +43,12 @@ def register_filters(app):
             return "released"
 
 
+    @app.template_filter()
+    def ip_use_status(value):
+        if value is True:
+            return "Yes"
+        if value is False:
+            return "No"
 
 
 

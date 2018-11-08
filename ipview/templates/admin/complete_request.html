@@ -17,7 +17,7 @@
         </thead>
         <tbody>
         {% for host in hosts %}
-        {% if host.request.user %}
+        {% if host.request %}
             <tr>
                 <td><a href="{{ url_for("admin.host_detail", host_id=host.id, next=parent_url) }}">{{ host.hostname }}</a></td>
                 <td>{{ host.description }}</td>

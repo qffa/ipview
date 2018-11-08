@@ -5,13 +5,12 @@ Description: admin view function
 
 """
 
-
 import ipaddress
 from sqlalchemy import and_
 from flask import Blueprint, render_template, url_for, redirect, flash, abort
 from flask import request as http_request
-from ipview.forms import SiteForm, NetworkForm, AddNetworkForm, SubnetForm, AddSubnetForm, FilterForm, HostForm
-from ipview.models import db, Site, Network, Subnet, IP, Event, Host, Request, Host
+from ipview.forms import SiteForm, NetworkForm, AddNetworkForm, SubnetForm, AddSubnetForm, FilterForm, HostForm, AssignIPForm
+from ipview.models import db, DBTools, Site, Network, Subnet, IP, Event, Host, Request, Host
 from flask_login import current_user
 from wtforms.validators import Required
 
@@ -46,16 +45,36 @@ def complete_request():
     """display all completed requests
     """
     url = http_request.url
-    hosts = Host.query.filter(Host.status!=Host.STATUS_REQUESTING).all()
+    hosts = Host.query.filter(Host.status!=Host.STATUS_REQUESTING).order_by(Host.updated_at.desc()).all()
 
     return render_template("admin/complete_request.html", hosts=hosts, parent_url=url)
 
-@admin.route("/request/approve/<int:host_id>")
+@admin.route("/request/approve/<int:host_id>", methods=['GET', 'POST'])
 def approve_request(host_id):
     """approve the request, and assign IP to host
     """
+    host = Host.query.get_or_404(host_id)
+    sid = host.request_subnet_id
+    available_ip_addresses = IP.query.filter(and_(IP.subnet_id==sid, IP.is_inuse==False)).\
+            paginate(page=1, per_page=10, error_out=False).items
+    form = AssignIPForm()
+    form.ip_id.choices = [(ip.id, ip.address) for ip in available_ip_addresses]
+    if form.validate_on_submit():
+        ip_id = form.ip_id.data
+        ip = IP.query.get_or_404(ip_id)
+        ip.is_inuse = True
+        host.ip_id = ip_id
+        host.request_subnet_id = None
+        host.status = Host.STATUS_ASSIGNED
+        host.remark = "new assigned IP"
+        DBTools.save_all(host, ip)
 
-    pass
+        return redirect(url_for("admin.waiting_request"))
+
+    else:
+        return render_template("admin/approve_request.html", form=form, host=host)
+
+
 
 @admin.route("/request/reject/<int:host_id>")
 def reject_request(host_id):
@@ -238,6 +257,7 @@ def add_subnet_under(network_id):
         ip_obj = ipaddress.ip_network(subnet.address)
         subnet.address = ip_obj.compressed
         subnet.address_pack = float(int(ip_obj.network_address))
+        subnet.mask = ip_obj.netmask.compressed
         # after subnet created, write all its IP addresses into database IP table
         if subnet.save():  
             subnet_scope = ipaddress.ip_network(subnet.address)    # ip_network obj for this subnet

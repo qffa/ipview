@@ -20,6 +20,22 @@
                 <td>{{ host.mac_address }}</td>
             </tr>
             <tr>
+                <td>status</td>
+                <td>{{ host.status|request_status }}</td>
+            </tr>
+            <tr>
+                <td>IP Info</td>
+                <td>
+                    {% if host.is_assigned() %}
+                    <p class="no-margin">IP address: {{ host.ip.address }}</p>
+                    <p class="no-margin">Mask: {{ host.ip.subnet.mask }}</p>
+                    <p class="no-margin">Gateway: {{ host.ip.subnet.gateway }}</p>
+                    <p class="no-margin">DNS1: {{ host.ip.subnet.dns1 }}</p>
+                    <p class="no-margin">DNS2: {{ host.ip.subnet.dns2 }}</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
                 <td>owner</td>
                 <td>{{ host.owner }}</td>
             </tr>
@@ -28,8 +44,8 @@
                 <td>{{ host.owner_email }}</td>
             </tr>
             <tr>
-                <td>status</td>
-                <td>{{ host.status|request_status }}</td>
+                <td>requestor</td>
+                <td>{{ host.request.user.username }}</td>
             </tr>
             <tr>
                 <td>desriptiion</td>

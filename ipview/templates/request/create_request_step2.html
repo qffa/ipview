@@ -6,8 +6,8 @@
 
 {% block content %}
 <h1 class="page-header">Create Request</h1>
-<p>Step 2(Total 4 stpes)</p>
-<div class="panel panel-default form">
+<p>Step 2(Total 3 stpes)</p>
+<div class="panel panel-default col-lg-4 col-md-6 col-sm-9 col-xs-12">
     <div class="panel-body">
         <form class="request-form" method="POST" action="{{ url }}">
             {{ form.csrf_token }}
@@ -17,7 +17,7 @@
             </div>
             <ul class="page-btn">
                 <li class="left"><a class="btn btn-default" href="{{ url[:url.rfind("&")] }}">previous</a></li>
-                <li class="right">{{ form.submit(class="btn btn-default", type="submit", value="next") }}</li>
+                <li class="right">{{ form.submit(class="btn btn-primary", type="submit", value="next") }}</li>
             </ul>
         </form>
     </div>

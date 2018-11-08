@@ -8,6 +8,22 @@ from flask import flash
 db = SQLAlchemy()
 
 
+class DBTools():
+    def save_all(*args):
+        """save multi entries into db.
+        """
+        for obj in args:
+            db.session.add(obj)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            flash("DB operation failed", "danger")
+            return False
+        else:
+            return True
+
+
 class Base(db.Model):
     __abstract__ = True
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

@@ -84,7 +84,7 @@ def create():
 def history():
     """display request history
     """
-    requests = Request.query.filter_by(user_id=current_user.id).all()
+    requests = Request.query.filter_by(user_id=current_user.id).order_by(Request.created_at.desc()).all()
     url = http_request.url
     return render_template("request/hist_request.html", requests=requests, parent_url=url)
 
