@@ -49,7 +49,7 @@ def complete_request():
 
     return render_template("admin/complete_request.html", hosts=hosts, parent_url=url)
 
-@admin.route("/request/approve/<int:host_id>", methods=['GET', 'POST'])
+@admin.route("/request/<int:host_id>/approve", methods=['GET', 'POST'])
 def approve_request(host_id):
     """approve the request, and assign IP to host
     """
@@ -76,7 +76,7 @@ def approve_request(host_id):
 
 
 
-@admin.route("/request/reject/<int:host_id>")
+@admin.route("/request/<int:host_id>/reject")
 def reject_request(host_id):
     """reject the request
     """
@@ -260,8 +260,8 @@ def add_subnet_under(network_id):
         subnet.mask = ip_obj.netmask.compressed
         # after subnet created, write all its IP addresses into database IP table
         if subnet.save():  
-            subnet_scope = ipaddress.ip_network(subnet.address)    # ip_network obj for this subnet
-            for ip_addr in subnet_scope.hosts():
+            subnet_space = ipaddress.ip_network(subnet.address)    # ip_network obj for this subnet
+            for ip_addr in subnet_space.hosts():
                 ip = IP()
                 ip.address = ip_addr.compressed
                 ip.subnet = subnet
@@ -361,7 +361,7 @@ def assign_ip(ip_id):
         ip.is_inuse = True
         host.ip = ip
         host.status = Host.STATUS_ASSIGNED
-        if ip.save() and host.save():
+        if DBTools.save_all(ip, host):
             host.log_event("Assign IP {} to host {}".format(ip.address, host.hostname))
             flash("IP assigned", "success")
         else:
@@ -381,8 +381,7 @@ def release_ip(ip_id):
         ip.is_inuse = False
         ip.host.ip_id = None
         ip.host.status = Host.STATUS_RELEASED
-        ip.host.save()
-        ip.save()
+        DBTools.save_all(ip, ip.host)
         flash("IP released", "success")
         
     return redirect(parent_url)

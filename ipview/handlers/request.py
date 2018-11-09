@@ -6,12 +6,12 @@ Description: request view functions
 """
 
 
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, abort
 from flask import request as http_request
 from flask_login import current_user
 from sqlalchemy import and_
 from ipview.forms import SelectSiteForm, SelectSubnetForm, HostForm
-from ipview.models import db, Site, Host, Subnet, Request
+from ipview.models import db, DBTools, Site, Host, Subnet, Request
 
 
 request = Blueprint('request', __name__, url_prefix="/request")
@@ -52,17 +52,18 @@ def create():
             request = Request()
             form.populate_obj(host)
             host.request_subnet_id = http_request.args.get("subnet")
-            host.save()
+            request.host = host
             request.user_id = current_user.id
-            request.host_id = host.id
-            request.save()
+            DBTools.save_all(host, request)
             return render_template("request/create_request_success.html")
         else:
             return render_template("request/create_request_step3.html", form=form, url=url)
     elif http_request.args.get("site"):     ## step 2
         form = SelectSubnetForm()
         form.subnet_id.choices = [
-                (subnet.id, "{}({})".format(subnet.name, subnet.address)) for subnet in Subnet.query.filter(and_(Subnet.is_requestable==True, Subnet.site_id==http_request.args.get("site"))).order_by("name")
+                (subnet.id, "{}({})".format(subnet.name, subnet.address))\
+                for subnet in Subnet.query.filter(and_(Subnet.is_requestable==True, Subnet.site_id==http_request.args.get("site"))).\
+                    order_by("name")
                 ]
         if form.validate_on_submit():
             subnet_id = form.subnet_id.data
@@ -96,6 +97,10 @@ def host_detail(host_id):
     """
     parent_url = http_request.args.get("next")
     host = Host.query.get_or_404(host_id)
+    if not host.request:
+        return abort(404)
+    elif host.request.user.id != current_user.id:
+        return abort(404)
 
     return render_template("request/host_detail.html", host=host, parent_url=parent_url)
 

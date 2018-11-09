@@ -215,10 +215,9 @@ class Request(Base):
     __tablename__ = "request"
 
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey("host.id"), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))             # username of requester
     user = db.relationship("User", uselist=False)
-    host_id = db.Column(db.Integer, db.ForeignKey("host.id")) 
     host = db.relationship("Host", uselist=False) 
 
 
