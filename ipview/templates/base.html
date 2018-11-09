@@ -25,6 +25,13 @@
                     <li{% block request %}{% endblock %}><a href="{{ url_for("request.index") }}">request</a></li>
                     <li{% block admin %}{% endblock %}><a href="{{ url_for("admin.index") }}">administration</a></li>
                     <li{% block setting %}{% endblock %}><a href="{{ url_for("setting.index") }}">setting</a></li>
+                    <li class="dropdown {% block user %}{%endblock%}">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span id="username">{{ current_user.username }}</span><span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for("front.change_password") }}">change password</a></li>
+                            <li><a href="{{ url_for("front.logout") }}">logout</a></li>
+                        </ul>
+                    </li>
                     <li><a href="#">help</a></li>
                 </ul>
                 <form class="navbar-form navbar-right">

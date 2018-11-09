@@ -5,6 +5,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, IntegerField, HiddenField
 from wtforms.validators import Length, Email, EqualTo, Required, NumberRange, MacAddress
 from ipview.models import db, Site, Network, Subnet, User
+from flask_login import current_user
 
 
 
@@ -88,13 +89,44 @@ class LoginForm(FlaskForm):
             flash("User does not exist.", "danger")
             raise ValidationError("user does not exist")
 
-
     def validate_password(self, field):
         user = User.query.filter_by(username=self.username.data).first()
         if user and not user.check_password(field.data):
             flash("Wrong password", "danger")
             raise ValidationError("wrong password")
 
+
+
+class ChangePasswordForm(FlaskForm):
+    password = PasswordField(
+        "Password",
+        validators = [Required()]
+        )
+    
+    new_password = PasswordField(
+        "New Password",
+        validators = [Required(), Length(6, 24)]
+        )
+
+    repeat_password = PasswordField(
+        "Repeat Password",
+        validators = [Required(), EqualTo('new_password', "password not match")]
+        )
+
+    submit = SubmitField(
+        "Submit"
+        )
+
+    def validate_password(self, field):
+        if not current_user.check_password(field.data):
+            raise ValidationError("wrong password")
+
+    def update_user(self, user):
+        user.password = self.new_password.data
+        if user.save():
+            return True
+        else:
+            return False
 
 
 class SiteForm(FlaskForm):
