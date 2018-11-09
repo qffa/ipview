@@ -13,7 +13,13 @@
                 </li>
                 <ul class="collapse level2-menu" id="sub_request">
                     <li id="waiting_request">
-                        <a href="{{ url_for("admin.waiting_request") }}">waiting</a>
+                        <a href="{{ url_for("admin.waiting_request") }}">waiting 
+                            {% if waiting_request_count > 0 %}
+                            <span class="badge">
+                                {{ waiting_request_count }}
+                            </span>
+                            {% endif %}
+                        </a>
                     </li>
                     <li id="complete_request">
                         <a href="{{ url_for("admin.complete_request") }}">complete</a>

@@ -7,7 +7,7 @@ Description: admin view function
 
 import ipaddress
 from sqlalchemy import and_
-from flask import Blueprint, render_template, url_for, redirect, flash, abort
+from flask import Blueprint, render_template, url_for, redirect, flash, abort, g
 from flask import request as http_request
 from ipview.forms import SiteForm, NetworkForm, AddNetworkForm, SubnetForm, AddSubnetForm, FilterForm, HostForm, AssignIPForm
 from ipview.models import db, DBTools, Site, Network, Subnet, IP, Event, Host, Request, Host

@@ -51,6 +51,16 @@ def register_filters(app):
             return "No"
 
 
+def register_context_processor(app):
+
+    @app.context_processor
+    def inject_waiting_request_count():
+        return dict(waiting_request_count = Host.query.filter_by(status=Host.STATUS_REQUESTING).count())
+
+
+
+
+
 
 def create_app(config):
     app = Flask(__name__)
@@ -59,6 +69,7 @@ def create_app(config):
     register_blueprint(app)
     register_extensions(app)
     register_filters(app)
+    register_context_processor(app)
 
 
     return app
