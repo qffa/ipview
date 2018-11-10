@@ -62,8 +62,7 @@ class LoginForm(FlaskForm):
             render_kw={
                 "placeholder": "Username",
                 "class": "form-control",
-                "required":'',
-                "autofocus": ''
+                "required":''
                 },
             validators=[Required()]
             )
