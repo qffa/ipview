@@ -355,6 +355,7 @@ def assign_ip(ip_id):
         return redirect(parent_url)
     host = Host()
     form = HostForm()
+    form.hostname.render_kw={"autofocus": ''}
     self_url = http_request.url
     if form.validate_on_submit():
         form.populate_obj(host)

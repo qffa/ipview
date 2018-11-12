@@ -99,6 +99,9 @@ class LoginForm(FlaskForm):
 class ChangePasswordForm(FlaskForm):
     password = PasswordField(
         "Password",
+        render_kw = {
+            "autofocus": ''
+        },
         validators = [Required()]
         )
     
@@ -128,10 +131,12 @@ class ChangePasswordForm(FlaskForm):
             return False
 
 
+
+
 class SiteForm(FlaskForm):
     name = StringField(
             "Site Name",
-            validators=[Required(), Length(4, 30), NameUniqueIn(Site)],
+            validators=[Required(), Length(2, 30), NameUniqueIn(Site)],
             render_kw={"autofocus": ''}
             )
     description = TextAreaField(
@@ -149,7 +154,7 @@ class NetworkForm(FlaskForm):
     )
     description = TextAreaField(
         "Descrition",
-        validators=[Required(), Length(4, 200)]
+        validators=[Required(), Length(2, 200)]
         )
     submit = SubmitField("Submit")
 
@@ -267,12 +272,32 @@ class FilterForm(FlaskForm):
 
 
 
+class SelectSiteForm(FlaskForm):
+    site_id = SelectField(
+        "please select your site", 
+        coerce=int,
+        validators=[Required()]
+        )
+
+    submit = SubmitField("Submit")
+
+
+
+class SelectSubnetForm(FlaskForm):
+    subnet_id = SelectField(
+        "please select the subnet your need", 
+        coerce=int,
+        choices=[(1, '')],
+        validators=[Required()]
+        )
+
+    submit = SubmitField("Submit")
+
 
 class HostForm(FlaskForm):
     hostname = StringField(
         "*Device Name",
-        validators=[Required(), Length(4, 128)],
-        render_kw={"autofocus": ''}
+        validators=[Required(), Length(2, 128)]
         )
     mac_address = StringField(
         "*MAC Address",
@@ -299,25 +324,11 @@ class HostForm(FlaskForm):
 
 
 
-class SelectSiteForm(FlaskForm):
-    site_id = SelectField(
-        "please select your site", 
-        coerce=int,
-        validators=[Required()]
-        )
+
+class CreateRequestForm(SelectSiteForm, SelectSubnetForm, HostForm):
 
     submit = SubmitField("Submit")
 
-
-
-class SelectSubnetForm(FlaskForm):
-    subnet_id = SelectField(
-        "please select the subnet your need", 
-        coerce=int,
-        validators=[Required()]
-        )
-
-    submit = SubmitField("Submit")
 
 
 class AssignIPForm(FlaskForm):

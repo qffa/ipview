@@ -1,4 +1,6 @@
 {% extends "request/request_base.html" %}
+{% from "macros.html" import render_form %}
+
 
 {% block title %}IPView{% endblock %}
 
@@ -6,20 +8,43 @@
 
 {% block content %}
 <h1 class="page-header">Create Request</h1>
-<p>Step 1(Total 3 steps)</p>
-<div class="panel panel-default col-lg-4 col-md-6 col-sm-9 col-xs-12">
-    <div class="panel-body">
-        <form class="request-form" method="POST" action="{{ url }}">
-            {{ form.csrf_token }}
-            <div class="form-group">
-                {{ form.site_id.label }}
-                {{ form.site_id(class="form-control") }}
-            </div>
-            <ul class="page-btn">
-                <li class="right">{{ form.submit(class="btn btn-primary", type="submit", value="next") }}</li>
-            </ul>
-        </form>
-    </div>
 
+<div class="col-lg-4 col-md-6 col-sm-9 col-xs-12">
+    {{ render_form(form, url_for("request.create")) }}
 </div>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+{% block script %}
+<script>
+
+
+function get_subnets (){
+    var site_id = $("#site_id").val();
+    var subnets = $("#subnet_id");
+    $.getJSON("/api/site/" + site_id + "/subnets", function(data){
+        subnets.empty();
+        $.each(data, function(name, value){
+            subnets.append('<option value=' + name + '>' + value + '</option>');
+            
+        });   
+        
+    });
+
+};
+
+
+$(document).ready(get_subnets);
+$("#site_id").change(get_subnets);
+
+
+</script>
+
 {% endblock %}

@@ -10,7 +10,7 @@ from flask import Blueprint, render_template, redirect, url_for, abort
 from flask import request as http_request
 from flask_login import current_user
 from sqlalchemy import and_
-from ipview.forms import SelectSiteForm, SelectSubnetForm, HostForm
+from ipview.forms import SelectSiteForm, SelectSubnetForm, HostForm, CreateRequestForm
 from ipview.models import db, DBTools, Site, Host, Subnet, Request
 
 
@@ -38,6 +38,19 @@ def new():
 @request.route('/create', methods=['GET', 'POST'])
 def create():
     """create new request
+    """
+
+
+    form = CreateRequestForm()
+    form.site_id.choices = [(site.id, site.name) for site in Site.query.order_by("name")]
+    if form.validate_on_submit():
+        site_id = form.site_id.data
+        return redirect(url + "&site={}".format(site_id))
+
+    else:
+        return render_template("request/create_request_step1.html", form=form)
+
+
     """
     url = http_request.url
     if http_request.args.get("subnet"):     ## step 3
@@ -80,6 +93,9 @@ def create():
 
         else:
             return render_template("request/create_request_step1.html", form=form, url=url)
+        """
+
+
 
 @request.route('/history')
 def history():
