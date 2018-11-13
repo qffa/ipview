@@ -8,6 +8,7 @@ Description: ipview API, for client get data
 from flask import Blueprint, make_response
 from ipview.models import Site, Subnet, IP
 from flask.json import dumps
+from sqlalchemy import and_
 
 
 
@@ -40,7 +41,7 @@ def free_ip_of_subnet(subnet_id, count):
     """return free IP addresses from the given subnet
     """
 
-    ips = IP.query.filter_by(subnet_id=subnet_id).limit(count).all()
+    ips = IP.query.filter(IP.subnet_id==subnet_id, IP.is_inuse==False).limit(count).all()
 
 
     content_type = 'application/json; charset=utf-8'

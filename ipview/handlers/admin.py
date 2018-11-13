@@ -61,8 +61,7 @@ def approve_request(host_id):
     """
     host = Host.query.get_or_404(host_id)
     sid = host.request_subnet_id
-    available_ip_addresses = IP.query.filter(and_(IP.subnet_id==sid, IP.is_inuse==False)).\
-            paginate(page=1, per_page=10, error_out=False).items
+    available_ip_addresses = IP.query.filter(and_(IP.subnet_id==sid, IP.is_inuse==False)).limit(10).all()
     form = AssignIPForm()
     form.ip_id.choices = [(ip.id, ip.address) for ip in available_ip_addresses]
     if form.validate_on_submit():
