@@ -8,6 +8,7 @@
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             <ul class="nav nav-sidebar">
+                <li id="summary" {% block summary %}{% endblock %}><a href="{{ url_for("admin.summary") }}">Summary</a></li>
                 <li onclick="active_request()" id="request" {% block request %}{% endblock %}>
                     <a data-toggle="collapse" href="#sub_request">Requests</a>
                 </li>
@@ -58,6 +59,7 @@
 <script type="text/javascript">
 function active_request() {
     document.getElementById("request").setAttribute("class", "active");
+    document.getElementById("summary").classList.remove("active");
     document.getElementById("network").classList.remove("active");
     document.getElementById("site").classList.remove("active");
     document.getElementById("log").classList.remove("active");

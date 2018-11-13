@@ -1,0 +1,70 @@
+{% extends "admin/admin_base.html" %}
+{% block summary %} class="active"{% endblock %}
+{% block content %}
+
+    <h1 class="page-header">Summary</h1>
+
+    <div class="row placeholders">
+        <div class="col-sm-6 col-md-3 placeholder">
+            <div class="image-bl">
+                <a href="{{ url_for("admin.waiting_request") }}">
+                    <h2 class="holder-content-bl">{{ waiting_request_count }}</h2>
+                </a>
+            </div>
+            <h4>Request</h4>
+            <span class="text-muted">waiting request count</span>
+        </div>
+        <div class="col-sm-6 col-md-3 placeholder">
+            <div class="image-gr">
+                <a href="{{ url_for("admin.network") }}">
+                    <h2 class="holder-content-gr">{{ network_count }}</h2>
+                </a>
+            </div>
+            <h4>Network</h4>
+            <span class="text-muted">total network count</span>
+        </div>
+        <div class="col-sm-6 col-md-3 placeholder">
+            <div class="image-bl">
+                <a href="{{ url_for("admin.network") }}">
+                    <h2 class="holder-content-bl">{{ subnet_count }}</h2>
+                </a>
+            </div>
+            <h4>Subnet</h4>
+            <span class="text-muted">total subnet count</span>
+        </div>
+        <div class="col-sm-6 col-md-3 placeholder">
+            <div class="image-gr">
+                <a href="{{ url_for("admin.site") }}">
+                    <h2 class="holder-content-gr">{{ site_count }}</h2>
+                </a>
+            </div>
+            <h4>Site</h4>
+            <span class="text-muted">total site count</span>
+        </div>
+    </div>
+
+
+
+    <h2 class="sub-header">Log</h2>
+
+    <table class="table table-hover table-condensed">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Event</th>
+                <th>User</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for event in events %}
+            <tr>
+                <td>{{ event.created_at }}</td>
+                <td>{{ event.content }}</td>
+                <td>{{ event.user }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

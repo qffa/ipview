@@ -104,9 +104,40 @@ body {
   border-radius: 50%;
 }
 
+/* qffa added placeholder */
 
+.placeholder > .image-bl, .placeholder > .image-gr {
+  display: flex;
+  border-radius: 50%;
+  border: 0;
+  background-repeat: repeat;
+  height: 200px;
+  width: 200px;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: center;
+}
 
+.placeholder > .image-bl {
+  background-color: #5081e7;
+}
 
+.placeholder > .image-gr {
+  background-color: #35daad;
+}
+
+.image-bl > a:hover, .image-gr > a:hover {
+  text-decoration: none;
+}
+
+.holder-content-bl {
+  margin: 10px;
+  color: #e6e6fa;
+}
+
+.holder-content-gr {
+  margin: 10px;
+}
 
 
 

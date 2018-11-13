@@ -2,7 +2,8 @@ from flask import Flask
 from ipview.config import configs
 from flask_login import LoginManager
 import datetime
-from ipview.models import db, User, Host
+from ipview.models import db, User, Host, Network, Subnet, Site
+
 
 
 def register_blueprint(app):
@@ -52,12 +53,24 @@ def register_filters(app):
             return "No"
 
 
+
 def register_context_processor(app):
 
     @app.context_processor
     def inject_waiting_request_count():
         return dict(waiting_request_count = Host.query.filter_by(status=Host.STATUS_REQUESTING).count())
 
+    @app.context_processor
+    def inject_network_count():
+        return dict(network_count = Network.query.count())
+
+    @app.context_processor
+    def inject_subnet_count():
+        return dict(subnet_count = Subnet.query.count())
+
+    @app.context_processor
+    def inject_site_count():
+        return dict(site_count = Site.query.count())
 
 
 

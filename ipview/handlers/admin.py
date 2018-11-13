@@ -30,6 +30,12 @@ def index():
 	return redirect(url_for("admin.waiting_request"))
 
 
+@admin.route("/summary")
+def summary():
+    events = Event.query.order_by(Event.created_at.desc()).limit(12).all()
+    return render_template("admin/summary.html", events=events)
+
+
 ## request.functions
 
 @admin.route("/request/waiting")
