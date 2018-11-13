@@ -43,9 +43,24 @@ def create():
 
     form = CreateRequestForm()
     form.site_id.choices = [(site.id, site.name) for site in Site.query.order_by("name")]
+    form.subnet_id.choices = [
+            (subnet.id, "{}".format(subnet.name))\
+            for subnet in Subnet.query.filter(Subnet.is_requestable==True)
+            ]
+    owner = http_request.args.get("owner")
+    if owner == "self":
+        owner = current_user
+        form.owner.data = current_user.username
+        form.owner_email.data = current_user.email
     if form.validate_on_submit():
-        site_id = form.site_id.data
-        return redirect(url + "&site={}".format(site_id))
+        host = Host()
+        request = Request()
+        form.populate_obj(host)
+        host.request_subnet_id = form.subnet_id.data
+        request.host = host
+        request.user_id = current_user.id
+        DBTools.save_all(host, request)
+        return render_template("request/create_request_success.html")
 
     else:
         return render_template("request/create_request_step1.html", form=form)

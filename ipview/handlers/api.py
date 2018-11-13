@@ -21,7 +21,7 @@ def subnets_of_site(site_id):
     """return subnets of given site
     """
 
-    subnets = Subnet.query.filter_by(site_id=site_id).all()
+    subnets = Subnet.query.filter(and_(Subnet.site_id==site_id, Subnet.is_requestable==True)).all()
 
     content_type = 'application/json; charset=utf-8'
     data = {}

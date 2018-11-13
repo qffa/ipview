@@ -27,7 +27,7 @@ def log():
 
 @admin.route("/")
 def index():
-	return redirect(url_for("admin.waiting_request"))
+	return redirect(url_for("admin.summary"))
 
 
 @admin.route("/summary")
