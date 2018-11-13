@@ -129,9 +129,9 @@ def host_detail(host_id):
     parent_url = http_request.args.get("next")
     host = Host.query.get_or_404(host_id)
     if not host.request:
-        return abort(404)
+        abort(404)
     elif host.request.user.id != current_user.id:
-        return abort(404)
+        abort(404)
 
     return render_template("request/host_detail.html", host=host, parent_url=parent_url)
 

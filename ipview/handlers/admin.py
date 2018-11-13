@@ -32,7 +32,7 @@ def index():
 
 @admin.route("/summary")
 def summary():
-    events = Event.query.order_by(Event.created_at.desc()).limit(12).all()
+    events = Event.query.order_by(Event.created_at.desc()).limit(11).all()
     return render_template("admin/summary.html", events=events)
 
 
@@ -432,6 +432,8 @@ def host_detail(host_id):
     """
     parent_url = http_request.args.get("next")
     host = Host.query.get_or_404(host_id)
+    if not host.request:
+        abort(404)
 
     return render_template("admin/host_detail.html", host=host, parent_url=parent_url)
 

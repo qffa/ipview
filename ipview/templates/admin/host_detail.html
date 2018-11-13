@@ -7,52 +7,58 @@
 
 {% block content %}
     <h1 class="page-header">Host</h1>
-    <h2>Host Detail</h2>
+    <p>Host Detail</p>
     <div class="col-lg-6 col-md-9 col-sm-12">
     <table class="table text-nowrap table-condensed">
         <tbody>
             <tr>
-                <td>hostname</td>
+                <th>hostname</th>
                 <td>{{ host.hostname }}</td>
             </tr>
             <tr>
-                <td>MAC address</td>
+                <th>MAC address</th>
                 <td>{{ host.mac_address }}</td>
             </tr>
+            {% if host.request_subnet_id %}
             <tr>
-                <td>status</td>
+                <th>Request Subnet</th>
+                <td>{{ host.request_subnet.address }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <th>status</th>
                 <td>{{ host.status|request_status }}</td>
             </tr>
+            {% if host.is_assigned() %}
             <tr>
-                <td>IP Info</td>
+                <th>IP Info</th>
                 <td>
-                    {% if host.is_assigned() %}
                     <p class="no-margin">IP address: {{ host.ip.address }}</p>
                     <p class="no-margin">Mask: {{ host.ip.subnet.mask }}</p>
                     <p class="no-margin">Gateway: {{ host.ip.subnet.gateway }}</p>
                     <p class="no-margin">DNS1: {{ host.ip.subnet.dns1 }}</p>
                     <p class="no-margin">DNS2: {{ host.ip.subnet.dns2 }}</p>
-                    {% endif %}
                 </td>
             </tr>
+            {% endif %}
             <tr>
-                <td>owner</td>
+                <th>owner</th>
                 <td>{{ host.owner }}</td>
             </tr>
             <tr>
-                <td>owner e-mail</td>
+                <th>owner e-mail</th>
                 <td>{{ host.owner_email }}</td>
             </tr>
             <tr>
-                <td>requestor</td>
+                <th>requestor</th>
                 <td>{{ host.request.user.username }}</td>
             </tr>
             <tr>
-                <td>desriptiion</td>
+                <th>desriptiion</th>
                 <td>{{ host.description }}</td>
             </tr>
             <tr>
-                <td>change log</td>
+                <th>change log</th>
                 <td>{{ host.remark }}</td>
             </tr>
         </tbody>
