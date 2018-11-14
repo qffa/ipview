@@ -7,10 +7,10 @@
 
 {% block content %}
     <h1 class="page-header">Waiting Request</h1>
-    <p>host: {{ host.hostname }}</p>
+    <p>host: {{ request.host.hostname }}</p>
 
     <div class="col-lg-4 col-md-6 col-sm-9 col-xs-12">
-        {{ render_form(form, url_for("admin.approve_request", host_id=host.id)) }}
+        {{ render_form(form, url_for("admin.approve_request", request_id=request.id)) }}
     </form>
 
 {% endblock %}

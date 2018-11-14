@@ -2,7 +2,7 @@ from flask import Flask
 from ipview.config import configs
 from flask_login import LoginManager
 import datetime
-from ipview.models import db, User, Host, Network, Subnet, Site, IP
+from ipview.models import db, User, Host, Network, Subnet, Site, IP, Request
 from sqlalchemy import and_
 
 
@@ -36,13 +36,13 @@ def register_filters(app):
 
     @app.template_filter()
     def request_status(value):
-        if value == Host.STATUS_REQUESTING:
+        if value == Request.STATUS_REQUESTING:
             return "requesting"
-        if value == Host.STATUS_REJECTED:
+        if value == Request.STATUS_REJECTED:
             return "rejected"
-        if value == Host.STATUS_ASSIGNED:
+        if value == Request.STATUS_ASSIGNED:
             return "assigned"
-        if value == Host.STATUS_RELEASED:
+        if value == Request.STATUS_RELEASED:
             return "released"
 
 
@@ -59,7 +59,7 @@ def register_context_processor(app):
 
     @app.context_processor
     def inject_waiting_request_count():
-        return dict(waiting_request_count = Host.query.filter_by(status=Host.STATUS_REQUESTING).count())
+        return dict(waiting_request_count = Request.query.filter_by(status=Request.STATUS_REQUESTING).count())
 
     @app.context_processor
     def inject_network_count():

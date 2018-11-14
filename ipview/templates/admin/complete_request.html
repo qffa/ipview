@@ -17,17 +17,15 @@
             </tr>
         </thead>
         <tbody>
-        {% for host in hosts %}
-        {% if host.request %}
+        {% for request in requests %}
             <tr>
-                <td>{{ host.id }}</td>
-                <td><a href="{{ url_for("admin.host_detail", host_id=host.id, next=parent_url) }}">{{ host.hostname }}</a></td>
-                <td>{{ host.description }}</td>
-                <td>{{ host.owner }}</td>
-                <td>{% if host.ip %}{{ host.ip.address }}{% endif %}</td>
-                <td>{{ host.status|request_status }}</td>
+                <td><a href="{{ url_for("admin.request_detail", request_id=request.id, next=parent_url) }}">{{ request.id }}</a></td>
+                <td>{{ request.host.hostname }}</td>
+                <td>{{ request.host.description }}</td>
+                <td>{{ request.host.owner }}</td>
+                <td>{% if request.host.ip %}{{ request.host.ip.address }}{% endif %}</td>
+                <td>{{ request.status|request_status }}</td>
             </tr>
-        {% endif %}
         {% endfor %}
         </tbody>
     </table>
@@ -38,7 +36,6 @@
 
 
 {% block script %}
-{{ super() }}
 <script>
     document.getElementById("sub_request").classList.add("in")
     document.getElementById("complete_request").classList.add("active")

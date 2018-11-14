@@ -13,7 +13,8 @@ class DBTools():
         """save multi entries into db.
         """
         for obj in args:
-            db.session.add(obj)
+            if obj is not None:
+                db.session.add(obj)
         try:
             db.session.commit()
         except:
@@ -132,6 +133,7 @@ class IP(Base):
     is_online = db.Column(db.Boolean, default=False)
     last_ping_time = db.Column(db.DateTime)
     host = db.relationship("Host", uselist=False)
+    remark = db.Column(db.String(512))  ## -> change log
 
     def __repr__(self):
         return '<ip: {}>'.format(self.address)
@@ -139,11 +141,6 @@ class IP(Base):
 
 class Host(Base):
     __tablename__ = 'host'
-
-    STATUS_REQUESTING = 10
-    STATUS_REJECTED = 20
-    STATUS_ASSIGNED = 30
-    STATUS_RELEASED = 40
 
     id = db.Column(db.Integer, primary_key=True)
     hostname = db.Column(db.String(64), nullable=False, unique=False)
@@ -153,27 +150,11 @@ class Host(Base):
     owner_email = db.Column(db.String(64), nullable=False)
     ip_id = db.Column(db.Integer, db.ForeignKey("ip.id"))
     ip = db.relationship('IP', uselist=False)
-    request_subnet_id = db.Column(db.Integer, db.ForeignKey("subnet.id"))
-    request_subnet = db.relationship("Subnet", uselist=False, backref=db.backref("request_hosts"))
     request = db.relationship("Request", uselist=False)
-    status = db.Column(db.SmallInteger, default=STATUS_REQUESTING)
-    remark = db.Column(db.String(512))
 
     def __repr__(self):
         return '<Host: {}>'.format(self.hostname)
 
-
-    def is_requesting(self):
-        return self.status == self.STATUS_REQUESTING
-
-    def is_rejected(self):
-        return self.status == self.STATUS_REJECTED
-
-    def is_assigned(self):
-        return self.status == self.STATUS_ASSIGNED
-
-    def is_released(self):
-        return self.status == self.STATUS_RELEASED
 
 
 class User(Base, UserMixin):
@@ -188,6 +169,8 @@ class User(Base, UserMixin):
     _password = db.Column('password', db.String(256), nullable=False)
     role = db.Column(db.SmallInteger, default=ROLE_USER)
     is_disable = db.Column(db.Boolean, default=False)
+    name = db.Column(db.String(64))
+    department = db.Column(db.String(64))
     remark = db.Column(db.String(128))
 
     def __repr__(self):
@@ -214,16 +197,36 @@ class User(Base, UserMixin):
 class Request(Base):
     __tablename__ = "request"
 
+    STATUS_REQUESTING = 10
+    STATUS_REJECTED = 20
+    STATUS_ASSIGNED = 30
+    STATUS_RELEASED = 40
+
 
     id = db.Column(db.Integer, db.ForeignKey("host.id"), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))             # username of requester
     user = db.relationship("User", uselist=False)
     host = db.relationship("Host", uselist=False) 
+    request_subnet_id = db.Column(db.Integer, db.ForeignKey("subnet.id"))
+    request_subnet = db.relationship("Subnet", uselist=False, backref=db.backref("requests"))
+    status = db.Column(db.SmallInteger, default=STATUS_REQUESTING)
 
 
     def __repr__(self):
         return '<request: {}>'.format(self.host.hostname)
 
+
+    def is_requesting(self):
+        return self.status == self.STATUS_REQUESTING
+
+    def is_rejected(self):
+        return self.status == self.STATUS_REJECTED
+
+    def is_assigned(self):
+        return self.status == self.STATUS_ASSIGNED
+
+    def is_released(self):
+        return self.status == self.STATUS_RELEASED
 
 
 class Event(Base):

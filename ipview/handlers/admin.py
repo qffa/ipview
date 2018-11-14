@@ -43,53 +43,59 @@ def waiting_request():
     """display all waiting requests.
     """
     url = http_request.url
-    hosts = Host.query.filter_by(status=Host.STATUS_REQUESTING).all()
-    return render_template("admin/waiting_request.html", hosts=hosts, parent_url=url)
+    requests = Request.query.filter_by(status=Request.STATUS_REQUESTING).all()
+    return render_template("admin/waiting_request.html", requests=requests, parent_url=url)
 
 @admin.route("/request/complete")
 def complete_request():
     """display all completed requests
     """
     url = http_request.url
-    hosts = Host.query.filter(Host.status!=Host.STATUS_REQUESTING).order_by(Host.updated_at.desc()).all()
+    requests = Request.query.filter(Request.status!=Request.STATUS_REQUESTING).order_by(Request.updated_at.desc()).all()
 
-    return render_template("admin/complete_request.html", hosts=hosts, parent_url=url)
+    return render_template("admin/complete_request.html", requests=requests, parent_url=url)
 
-@admin.route("/request/<int:host_id>/approve", methods=['GET', 'POST'])
-def approve_request(host_id):
+@admin.route("/request/<int:request_id>/detail")
+def request_detail(request_id):
+    """dispaly detailed request info
+    """
+    parent_url = http_request.args.get("next")
+    request = Request.query.get_or_404(request_id)
+
+    return render_template("admin/request_detail.html", request=request, parent_url=parent_url)
+@admin.route("/request/<int:request_id>/approve", methods=['GET', 'POST'])
+def approve_request(request_id):
     """approve the request, and assign IP to host
     """
-    host = Host.query.get_or_404(host_id)
-    sid = host.request_subnet_id
+    request = Request.query.get_or_404(request_id)
+    sid = request.request_subnet_id
     available_ip_addresses = IP.query.filter(and_(IP.subnet_id==sid, IP.is_inuse==False)).limit(10).all()
     form = AssignIPForm()
     form.ip_id.choices = [(ip.id, ip.address) for ip in available_ip_addresses]
     if form.validate_on_submit():
-        ip_id = form.ip_id.data
-        ip = IP.query.get_or_404(ip_id)
+        ip = IP.query.get_or_404(form.ip_id.data)
         ip.is_inuse = True
-        host.ip_id = ip_id
-        host.request_subnet_id = None
-        host.status = Host.STATUS_ASSIGNED
-        host.remark = "new assigned IP"
-        DBTools.save_all(host, ip)
+        request.host.ip_id = ip.id
+        request.request_subnet_id = None
+        request.status = Request.STATUS_ASSIGNED
+        DBTools.save_all(request, ip)
 
         return redirect(url_for("admin.waiting_request"))
 
     else:
-        return render_template("admin/approve_request.html", form=form, host=host)
+        return render_template("admin/approve_request.html", form=form, request=request)
 
 
 
-@admin.route("/request/<int:host_id>/reject")
-def reject_request(host_id):
+@admin.route("/request/<int:request_id>/reject")
+def reject_request(request_id):
     """reject the request
     """
-    host = Host.query.get_or_404(host_id)
-    host.status = Host.STATUS_REJECTED
-    host.request_subnet = None
+    request = Request.query.get_or_404(request_id)
+    request.status = request.STATUS_REJECTED
+    request.request_subnet = None
 
-    host.save()
+    request.save()
 
     return redirect(url_for("admin.waiting_request"))
 
@@ -314,7 +320,7 @@ def delete_subnet(subnet_id):
     network = subnet.network
     if IP.query.filter(and_(IP.subnet_id==subnet_id, IP.is_inuse==True)).first():
         flash("please remove the host under this subnet firstly", "danger")
-    elif subnet.request_hosts:
+    elif subnet.requests:
         flash("delete failed. someone is requesting IP from this subnet", "danger")
     else:
         for ip in subnet.ips:
@@ -366,7 +372,6 @@ def assign_ip(ip_id):
         form.populate_obj(host)
         ip.is_inuse = True
         host.ip = ip
-        host.status = Host.STATUS_ASSIGNED
         if DBTools.save_all(ip, host):
             host.log_event("Assign IP {} to host {}".format(ip.address, host.hostname))
             flash("IP assigned", "success")
@@ -386,8 +391,9 @@ def release_ip(ip_id):
     if ip.is_inuse:
         ip.is_inuse = False
         ip.host.ip_id = None
-        ip.host.status = Host.STATUS_RELEASED
-        DBTools.save_all(ip, ip.host)
+        if ip.host.request:
+            ip.host.request.status = Request.STATUS_RELEASED
+        DBTools.save_all(ip, ip.host, ip.host.request)
         flash("IP released", "success")
         
     return redirect(parent_url)
@@ -426,16 +432,6 @@ def ip_detail(ip_id):
     return render_template("admin/ip_detail.html", ip=ip, parent_url=parent_url)
 
 
-@admin.route("/host/<int:host_id>/detail")
-def host_detail(host_id):
-    """dispaly host detail info
-    """
-    parent_url = http_request.args.get("next")
-    host = Host.query.get_or_404(host_id)
-    if not host.request:
-        abort(404)
-
-    return render_template("admin/host_detail.html", host=host, parent_url=parent_url)
 
 
 

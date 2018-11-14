@@ -56,7 +56,7 @@ def create():
         host = Host()
         request = Request()
         form.populate_obj(host)
-        host.request_subnet_id = form.subnet_id.data
+        request.request_subnet_id = form.subnet_id.data
         request.host = host
         request.user_id = current_user.id
         DBTools.save_all(host, request)

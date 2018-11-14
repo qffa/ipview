@@ -316,9 +316,6 @@ class HostForm(FlaskForm):
         "Description",
         validators=[Length(4, 256)]
         )
-    remark = TextAreaField(
-        "Change log",
-        )
     submit = SubmitField("Submit")
 
 
