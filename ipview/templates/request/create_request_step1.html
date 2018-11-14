@@ -19,13 +19,8 @@
 
 
 
-
-
-
 {% block script %}
 <script>
-
-
 function get_subnets (){
     var site_id = $("#site_id").val();
     var subnets = $("#subnet_id");
@@ -40,11 +35,8 @@ function get_subnets (){
 
 };
 
-
 $(document).ready(get_subnets);
 $("#site_id").change(get_subnets);
-
-
 </script>
 
 {% endblock %}

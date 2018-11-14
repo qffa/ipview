@@ -63,6 +63,7 @@ def create():
         return render_template("request/create_request_success.html")
 
     else:
+        form.subnet_id.choices = []
         return render_template("request/create_request_step1.html", form=form)
 
 
