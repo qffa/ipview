@@ -20,6 +20,7 @@
                 <th>Subnet Address</th>
                 <th>Subnet Name</th>
                 <th>Description</th>
+                <th>Utilization</th>
                 <th>Site</th>
                 <th>Action</th>
             </tr>
@@ -30,6 +31,7 @@
                 <td><a href="{{ url_for("admin.subnet_detail", parent="network", parent_id=network.id, subnet_id=subnet.id) }}">{{ subnet.address }}</a></td>
                 <td>{{ subnet.name }}</td>
                 <td>{{ subnet.description }}</td>
+                <td>{{ subnet_utilization(subnet.id) }}</td>
                 <td>{{ subnet.site.name }}</td>
                 <td>
                     <div class="dropdown">

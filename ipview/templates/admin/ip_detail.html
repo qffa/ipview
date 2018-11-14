@@ -15,32 +15,32 @@
 {% block content %}
     <h1 class="page-header">IP: {{ ip.address }}</h1>
     {% if not ip.is_inuse %}<p style="color: red;">unassigned</p>{% endif %}
-    <h2>Host Detail</h2>
+    <p>Host Infomation</p>
     <div class="col-lg-6 col-md-9 col-sm-12">
     <table class="table text-nowrap table-condensed">
         <tbody>
             <tr>
-                <td>hostname</td>
+                <th>hostname</th>
                 <td>{{ ip.host.hostname }}</td>
             </tr>
             <tr>
-                <td>MAC address</td>
+                <th>MAC address</th>
                 <td>{{ ip.host.mac_address }}</td>
             </tr>
             <tr>
-                <td>owner</td>
+                <th>owner</th>
                 <td>{{ ip.host.owner }}</td>
             </tr>
             <tr>
-                <td>owner e-mail</td>
+                <th>owner e-mail</th>
                 <td>{{ ip.host.owner_email }}</td>
             </tr>
             <tr>
-                <td>desriptiion</td>
+                <th>desriptiion</th>
                 <td>{{ ip.host.description }}</td>
             </tr>
             <tr>
-                <td>change log</td>
+                <th>change log</th>
                 <td>{{ ip.host.remark }}</td>
             </tr>
         </tbody>

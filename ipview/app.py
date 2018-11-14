@@ -2,7 +2,8 @@ from flask import Flask
 from ipview.config import configs
 from flask_login import LoginManager
 import datetime
-from ipview.models import db, User, Host, Network, Subnet, Site
+from ipview.models import db, User, Host, Network, Subnet, Site, IP
+from sqlalchemy import and_
 
 
 
@@ -72,6 +73,13 @@ def register_context_processor(app):
     def inject_site_count():
         return dict(site_count = Site.query.count())
 
+    @app.context_processor
+    def inject_subnet_utilization():
+        def calculate_subnet_utilization(subnet_id):
+            used = IP.query.filter(and_(IP.subnet_id==subnet_id, IP.is_inuse==True)).count()
+            total = IP.query.filter(IP.subnet_id==subnet_id).count()
+            return '{:.2%}'.format(used/total)
+        return dict(subnet_utilization=calculate_subnet_utilization)
 
 
 
