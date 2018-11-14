@@ -40,18 +40,18 @@ def register_filters(app):
             return "requesting"
         if value == Request.STATUS_REJECTED:
             return "rejected"
-        if value == Request.STATUS_ASSIGNED:
-            return "assigned"
-        if value == Request.STATUS_RELEASED:
-            return "released"
+        if value == Request.STATUS_IP_ASSIGNED:
+            return "IP assigned"
+        if value == Request.STATUS_IP_RELEASED:
+            return "IP released"
 
 
     @app.template_filter()
     def ip_use_status(value):
         if value is True:
-            return "Yes"
+            return "Used"
         if value is False:
-            return "No"
+            return "Unused"
 
 
 

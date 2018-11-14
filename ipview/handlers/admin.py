@@ -60,13 +60,15 @@ def request_detail(request_id):
     """dispaly detailed request info
     """
     parent_url = http_request.args.get("next")
+    self_url = http_request.url
     request = Request.query.get_or_404(request_id)
 
-    return render_template("admin/request_detail.html", request=request, parent_url=parent_url)
+    return render_template("admin/request_detail.html", request=request, parent_url=parent_url, self_url=self_url)
 @admin.route("/request/<int:request_id>/approve", methods=['GET', 'POST'])
 def approve_request(request_id):
     """approve the request, and assign IP to host
     """
+    parent_url = http_request.args.get('next')
     request = Request.query.get_or_404(request_id)
     sid = request.request_subnet_id
     available_ip_addresses = IP.query.filter(and_(IP.subnet_id==sid, IP.is_inuse==False)).limit(10).all()
@@ -77,13 +79,13 @@ def approve_request(request_id):
         ip.is_inuse = True
         request.host.ip_id = ip.id
         request.request_subnet_id = None
-        request.status = Request.STATUS_ASSIGNED
+        request.status = Request.STATUS_IP_ASSIGNED
         DBTools.save_all(request, ip)
 
         return redirect(url_for("admin.waiting_request"))
 
     else:
-        return render_template("admin/approve_request.html", form=form, request=request)
+        return render_template("admin/approve_request.html", form=form, request=request, parent_url=parent_url)
 
 
 
@@ -392,7 +394,7 @@ def release_ip(ip_id):
         ip.is_inuse = False
         ip.host.ip_id = None
         if ip.host.request:
-            ip.host.request.status = Request.STATUS_RELEASED
+            ip.host.request.status = Request.STATUS_IP_RELEASED
         DBTools.save_all(ip, ip.host, ip.host.request)
         flash("IP released", "success")
         

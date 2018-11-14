@@ -67,50 +67,6 @@ def create():
         return render_template("request/create_request_step1.html", form=form)
 
 
-    """
-    url = http_request.url
-    if http_request.args.get("subnet"):     ## step 3
-        form = HostForm()
-        owner = http_request.args.get("owner")
-        if owner == "self":
-            owner = current_user
-            form.owner.data = current_user.username
-            form.owner_email.data = current_user.email
-        if form.validate_on_submit():
-            host = Host()
-            request = Request()
-            form.populate_obj(host)
-            host.request_subnet_id = http_request.args.get("subnet")
-            request.host = host
-            request.user_id = current_user.id
-            DBTools.save_all(host, request)
-            return render_template("request/create_request_success.html")
-        else:
-            return render_template("request/create_request_step3.html", form=form, url=url)
-    elif http_request.args.get("site"):     ## step 2
-        form = SelectSubnetForm()
-        form.subnet_id.choices = [
-                (subnet.id, "{}({})".format(subnet.name, subnet.address))\
-                for subnet in Subnet.query.filter(and_(Subnet.is_requestable==True, Subnet.site_id==http_request.args.get("site"))).\
-                    order_by("name")
-                ]
-        if form.validate_on_submit():
-            subnet_id = form.subnet_id.data
-            return redirect(url + "&subnet={}".format(subnet_id))
-
-        else:
-            return render_template("request/create_request_step2.html", form=form, url=url)
-    else:   ## step 1
-        form = SelectSiteForm()
-        form.site_id.choices = [(site.id, site.name) for site in Site.query.order_by("name")]
-        if form.validate_on_submit():
-            site_id = form.site_id.data
-            return redirect(url + "&site={}".format(site_id))
-
-        else:
-            return render_template("request/create_request_step1.html", form=form, url=url)
-        """
-
 
 
 @request.route('/history')
@@ -123,18 +79,16 @@ def history():
 
 
 
-@request.route("/host/<int:host_id>/detail")
-def host_detail(host_id):
-    """dispaly host detail info
+@request.route("/<int:request_id>/detail")
+def request_detail(request_id):
+    """dispaly request detail info
     """
     parent_url = http_request.args.get("next")
-    host = Host.query.get_or_404(host_id)
-    if not host.request:
-        abort(404)
-    elif host.request.user.id != current_user.id:
-        abort(404)
+    request = Request.query.get_or_404(request_id)
+    if request.user.id != current_user.id:
+        return abort(404)
 
-    return render_template("request/host_detail.html", host=host, parent_url=parent_url)
+    return render_template("request/request_detail.html", request=request, parent_url=parent_url)
 
 
 

@@ -13,62 +13,72 @@
 {% block content %}
     <h1 class="page-header">Host</h1>
     <p>Host Detail</p>
+    <div class="row">
     <div class="col-lg-6 col-md-9 col-sm-12">
-    <table class="table text-nowrap table-condensed">
-        <tbody>
-            <tr>
-                <th>Request ID</th>
-                <td>{{ request.id }}</td>
-            </tr>
-            <tr>
-                <th>hostname</th>
-                <td>{{ request.host.hostname }}</td>
-            </tr>
-            <tr>
-                <th>MAC address</th>
-                <td>{{ request.host.mac_address }}</td>
-            </tr>
-            {% if request.request_subnet %}
-            <tr>
-                <th>Request Subnet</th>
-                <td>{{ request.request_subnet.address }}</td>
-            </tr>
-            {% endif %}
-            <tr>
-                <th>status</th>
-                <td>{{ request.host.status|request_status }}</td>
-            </tr>
-            {% if request.is_assigned() %}
-            <tr>
-                <th>IP Info</th>
-                <td>
-                    <p class="no-margin">IP address: {{ request.host.ip.address }}</p>
-                    <p class="no-margin">Mask: {{ request.host.ip.subnet.mask }}</p>
-                    <p class="no-margin">Gateway: {{ request.host.ip.subnet.gateway }}</p>
-                    <p class="no-margin">DNS1: {{ request.host.ip.subnet.dns1 }}</p>
-                    <p class="no-margin">DNS2: {{ request.host.ip.subnet.dns2 }}</p>
-                </td>
-            </tr>
-            {% endif %}
-            <tr>
-                <th>owner</th>
-                <td>{{ request.host.owner }}</td>
-            </tr>
-            <tr>
-                <th>owner e-mail</th>
-                <td>{{ request.host.owner_email }}</td>
-            </tr>
-            <tr>
-                <th>requestor</th>
-                <td>{{ request.host.request.user.username }}</td>
-            </tr>
-            <tr>
-                <th>desriptiion</th>
-                <td>{{ request.host.description }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <table class="table text-nowrap table-condensed">
+            <tbody>
+                <tr>
+                    <th>request ID</th>
+                    <td>{{ request.id }}</td>
+                </tr>
+                <tr>
+                    <th>hostname</th>
+                    <td>{{ request.host.hostname }}</td>
+                </tr>
+                <tr>
+                    <th>MAC address</th>
+                    <td>{{ request.host.mac_address }}</td>
+                </tr>
+                {% if request.request_subnet %}
+                <tr>
+                    <th>Request Subnet</th>
+                    <td>{{ request.request_subnet.address }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <th>status</th>
+                    <td>{{ request.status|request_status }}</td>
+                </tr>
+                {% if request.is_ip_assigned() %}
+                <tr>
+                    <th>IP Information</th>
+                    <td>
+                        <p class="no-margin">IP address: {{ request.host.ip.address }}</p>
+                        <p class="no-margin">Mask: {{ request.host.ip.subnet.mask }}</p>
+                        <p class="no-margin">Gateway: {{ request.host.ip.subnet.gateway }}</p>
+                        <p class="no-margin">DNS1: {{ request.host.ip.subnet.dns1 }}</p>
+                        <p class="no-margin">DNS2: {{ request.host.ip.subnet.dns2 }}</p>
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <th>owner</th>
+                    <td>{{ request.host.owner }}</td>
+                </tr>
+                <tr>
+                    <th>owner e-mail</th>
+                    <td>{{ request.host.owner_email }}</td>
+                </tr>
+                <tr>
+                    <th>requestor</th>
+                    <td>{{ request.user.username }}</td>
+                </tr>
+                <tr>
+                    <th>desriptiion</th>
+                    <td>{{ request.host.description }}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+    </div>
+    {% if request.is_requesting() %}
+    <div class="command-btn">
+        <a href="{{ url_for("admin.approve_request", request_id=request.id, next=self_url) }}" type="button" class="btn btn-default">Approve</a>
+    </div>
+    <div class="command-btn">
+        <a href="{{ url_for("admin.reject_request", request_id=request.id) }}" type="button" class="btn btn-default">Reject</a>
+    </div>
+    {% endif %}
 
 {% endblock %}
 

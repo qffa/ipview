@@ -199,8 +199,8 @@ class Request(Base):
 
     STATUS_REQUESTING = 10
     STATUS_REJECTED = 20
-    STATUS_ASSIGNED = 30
-    STATUS_RELEASED = 40
+    STATUS_IP_ASSIGNED = 30
+    STATUS_IP_RELEASED = 40
 
 
     id = db.Column(db.Integer, db.ForeignKey("host.id"), primary_key=True)
@@ -222,11 +222,11 @@ class Request(Base):
     def is_rejected(self):
         return self.status == self.STATUS_REJECTED
 
-    def is_assigned(self):
-        return self.status == self.STATUS_ASSIGNED
+    def is_ip_assigned(self):
+        return self.status == self.STATUS_IP_ASSIGNED
 
-    def is_released(self):
-        return self.status == self.STATUS_RELEASED
+    def is_ip_released(self):
+        return self.status == self.STATUS_IP_RELEASED
 
 
 class Event(Base):

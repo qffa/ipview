@@ -2,7 +2,11 @@
 {% from "macros.html" import render_form %}
 
 {% block nav %}
+    {% if parent_url %}
+    <a href="{{ parent_url }}">&larr; back</a>
+    {% else %}
     <a href="{{ url_for("admin.waiting_request") }}">&larr; back</a>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
