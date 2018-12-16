@@ -109,8 +109,9 @@ def site():
     """display all sites
     """
     sites = Site.query.order_by(Site.name).all()
-    form = FilterForm()
-    form.filter_by.choices = [("name", "site name"), ("description", "description")]
+    #form = FilterForm()
+    #form.filter_by.choices = [("name", "site name"), ("description", "description")]
+    form = SiteForm()
     return render_template("admin/site.html", sites=sites, form=form)
 
 
@@ -151,7 +152,7 @@ def edit_site(site_id):
         site.save()
         return redirect(url_for("admin.site"))
     else:
-        return render_template("admin/edit_site.html", form=form, site_id=site_id)
+        return render_template("admin/edit_site_modal.html", form=form, site_id=site_id)
 
 
 @admin.route("/site/<int:site_id>/delete")

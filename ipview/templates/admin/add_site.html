@@ -1,19 +1,9 @@
-{% extends "admin/admin_base.html" %}
-{% from "macros.html" import render_form %}
+{% extends "admin/site.html" %}
 
-{% block site %} class="active"{% endblock %}
-
-{% block nav %}
-    <a href="{{ url_for("admin.site") }}">&larr; back</a>
-{% endblock %}
-
-{% block content %}
-    <h1 class="page-header">Add Site</h1>
-
-    <div class="col-lg-4 col-md-6 col-sm-9 col-xs-12">
-        {{ render_form(form, url_for("admin.add_site")) }}
-    </div>
-
-
-
+{% block script %}
+{{ super() }}
+<script>
+    $("#addSiteDialogBox").removeClass('fade');
+    $("#addSiteDialogBox").modal('show');
+</script>
 {% endblock %}

@@ -36,6 +36,53 @@
 {% endmacro %}
 
 
+{% macro render_modal_form(form, url, header) %}
+
+    <form method="POST" action="{{ url }}">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">{{ header }}</h4>
+    </div>
+    <div class="modal-body">
+    {{ form.csrf_token }}
+    {% for field in form %}
+    {% if field.type == 'CSRFTokenField' %}
+        {{ '' }}
+    {% elif field.type == "HiddenField" %}
+        {{ field }}
+    {% elif field.name == 'id' %}
+        {{ '' }}
+    {% elif field.type == 'BooleanField' %}
+        <div class="checkbox">
+            <label>
+            {{ field }}<span>{{ field.label.text }}</span>
+            </label>
+        </div>
+    {% elif field.type == 'SubmitField' %}
+        {{ '' }}
+    {% else %}
+        <div class="form-group {% if field.errors %}has-error{% endif %}">
+            {{ field.label }}
+            {{ field(class="form-control") }}
+            {% if field.description %}<span class="text-muted">{{ field.description }}</span>{% endif %}
+            {% if field.errors %}
+            {% for error in field.errors %}
+            <span class="help-block">{{ error }}</span>
+            {% endfor %}
+            {% endif %}
+        </div>
+    {% endif %}
+    {% endfor %}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        {{ form.submit(class="btn btn-primary", type="submit")}}
+    </div>
+
+
+    </form>
+{% endmacro %}
+
 
 <!-- render subnet -->
 <!-- render subnet under Network or Site -->
