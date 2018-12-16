@@ -341,17 +341,13 @@ def delete_subnet(subnet_id):
     return redirect(url_for("admin.network_detail", network_id=network.id))
 
 
-@admin.route("/<parent>/<int:parent_id>/subnet/<int:subnet_id>")
-def subnet_detail(parent, parent_id, subnet_id):
+@admin.route("/<parent>/subnet/<int:subnet_id>/detail")
+def subnet_detail(parent, subnet_id):
     """display all IP addresses in this subnet.
     """
-    if parent == 'network':
-        parent_obj = Network.query.get_or_404(parent_id)
-    elif parent == 'site':
-        parent_obj = Site.query.get_or_404(parent_id)
     subnet = Subnet.query.get_or_404(subnet_id)
-    url = http_request.url
-    return render_template("admin/subnet_detail.html", parent=parent, subnet=subnet, parent_url=url)
+    prev_url = http_request.url
+    return render_template("admin/subnet_detail.html", parent=parent, subnet=subnet, prev_url=prev_url)
 
 
 
@@ -361,15 +357,14 @@ def subnet_detail(parent, parent_id, subnet_id):
 def assign_ip(ip_id):
     """assign IP address to host
     """
-    parent_url = http_request.args.get('next')
+    prev_url = http_request.referrer
     ip = IP.query.get_or_404(ip_id)
     if ip.is_inuse:
         flash("already assign to a host", "danger")
-        return redirect(parent_url)
+        return redirect(prev_url)
     host = Host()
     form = HostForm()
     form.hostname.render_kw={"autofocus": ''}
-    self_url = http_request.url
     if form.validate_on_submit():
         form.populate_obj(host)
         ip.is_inuse = True
@@ -379,16 +374,39 @@ def assign_ip(ip_id):
             flash("IP assigned", "success")
         else:
             flash("failed to assign this IP", "danger")
-        return redirect(parent_url or url_for("admin.network"))
+        return redirect(url_for("admin.network"))
     else:
-        return render_template("admin/assign_ip.html", ip=ip, form=form, self_url=self_url, parent_url=parent_url)
+        return render_template("admin/assign_ip.html", ip=ip, form=form, prev_url=prev_url)
+
+
+@admin.route("/ip/<int:ip_id>/edit", methods=['GET', 'POST'])
+def edit_ip(ip_id):
+    """edit the host info on this ip
+    """
+    if http_request.referrer != http_request.url:
+        prev_url = http_request.referrer
+    ip = IP.query.get_or_404(ip_id)
+    if not ip.is_inuse:
+        flash("please assign firstly", "danger")
+        return redirect(prev_url)
+
+    form = HostForm(obj=ip.host)
+    if form.validate_on_submit():
+        form.populate_obj(ip.host)
+        if ip.host.save():
+            flash("host updated", "success")
+        else:
+            flash("failed to update host", "danger")
+        return redirect(url_for("admin.subnet_detail", subnet_id=ip.subnet_id))
+    else:
+        return render_template("admin/edit_ip.html", ip=ip, form=form, prev_url=prev_url)
 
 
 @admin.route("/ip/<int:ip_id>/release")
 def release_ip(ip_id):
     """release this IP address
     """
-    parent_url = http_request.args.get('next')
+    prev_url = http_request.referrer
     ip = IP.query.get_or_404(ip_id)
     if ip.is_inuse:
         ip.is_inuse = False
@@ -398,40 +416,18 @@ def release_ip(ip_id):
         DBTools.save_all(ip, ip.host, ip.host.request)
         flash("IP released", "success")
         
-    return redirect(parent_url)
+    return redirect(prev_url)
 
 
-@admin.route("/ip/<int:ip_id>/edit", methods=['GET', 'POST'])
-def edit_ip(ip_id):
-    """edit the host info on this ip
-    """
-    parent_url = http_request.args.get('next')
-    self_url = http_request.url
-    ip = IP.query.get_or_404(ip_id)
-    if not ip.is_inuse:
-        flash("please assign firslt", "danger")
-        return redirect(parent_url)
-
-    form = HostForm(obj=ip.host)
-    if form.validate_on_submit():
-        form.populate_obj(ip.host)
-        if ip.host.save():
-            flash("host updated", "success")
-        else:
-            flash("failed to update host", "danger")
-        return redirect(parent_url or url_for("admin.network"))
-    else:
-        return render_template("admin/assign_ip.html", ip=ip, form=form, self_url=self_url, parent_url=parent_url)
 
 @admin.route("/ip/<int:ip_id>/detail")
 def ip_detail(ip_id):
     """display host detail on this IP address
     """
-    parent_url = http_request.args.get('next')
-    #self_url = http_request.url
+    prev_url = http_request.referrer
     ip = IP.query.get_or_404(ip_id)
 
-    return render_template("admin/ip_detail.html", ip=ip, parent_url=parent_url)
+    return render_template("admin/ip_detail.html", ip=ip, prev_url=prev_url)
 
 
 

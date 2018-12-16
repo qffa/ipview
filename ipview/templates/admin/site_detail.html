@@ -24,7 +24,7 @@
         <tbody>
         {% for subnet in site.subnets %}
             <tr>
-                <td><a href="{{ url_for("admin.subnet_detail", parent="site", parent_id=site.id, subnet_id=subnet.id) }}">{{ subnet.address }}</a></td>
+                <td><a href="{{ url_for("admin.subnet_detail", parent="site", subnet_id=subnet.id) }}">{{ subnet.address }}</a></td>
                 <td>{{ subnet.name }}</td>
                 <td>{{ subnet_utilization(subnet.id) }}</td>
                 <td>{{ subnet.network.address }}</td>

@@ -175,6 +175,9 @@ class AddNetworkForm(NetworkForm):
 
 
 class SubnetForm(FlaskForm):
+    network_id = HiddenField(       # transfer network id to subnet form
+        label = ''
+        )
     name = StringField(
         "*Subnet Name",
         validators=[Length(2, 30)],
@@ -218,15 +221,12 @@ class SubnetForm(FlaskForm):
         "Submit",
         render_kw={
             "data-toggle": "modal",
-            "data-target": "#myModal",
+            "data-target": "#loadingEffect",
             "data-backdrop": "static",
             "data-keyboard": "false"
         }
         )
 
-    network_id = HiddenField(       # transfer network id to subnet form
-        label = ''
-        )
 
     def validate_gateway(self, field):
         if field.data != '':

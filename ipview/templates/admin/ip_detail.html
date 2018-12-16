@@ -1,16 +1,16 @@
 {% extends "admin/admin_base.html" %}
 
 {% block network %}
-    {% if parent_url and 'network' in parent_url %} class="active"{% endif %}
+    {% if prev_url and 'network' in prev_url %} class="active"{% endif %}
 {% endblock %}
 
 {% block site %}
-    {% if parent_url and 'site' in parent_url %} class="active"{% endif %}
+    {% if prev_url and 'site' in prev_url %} class="active"{% endif %}
 {% endblock %}
 
 {% block nav %}
-    {% if parent_url %}
-    <a href="{{ parent_url }}">&larr; back</a>
+    {% if prev_url %}
+    <a href="{{ prev_url }}">&larr; back</a>
     {% else %}
     <a href="{{ url_for("admin.summary") }}">&larr; back</a>
     {% endif %}

@@ -1,15 +1,15 @@
 {% extends "admin/admin_base.html" %}
 
 {% block network %}
-    {% if parent == 'network' %} class="active"{% endif %}
+    {% if parent == "network" %} class="active"{% endif %}
 {% endblock %}
 
 {% block site %}
-    {% if parent == 'site' %} class="active"{% endif %}
+    {% if parent == "site" %} class="active"{% endif %}
 {% endblock %}
 
 {% block nav %}
-    {% if parent == 'network' %}
+    {% if parent == "network" %}
     <p>
         <a href="{{ url_for("admin.network") }}">network</a>
         &gt;&gt; 
@@ -17,7 +17,7 @@
         &gt;&gt; 
         {{ subnet.address }}
     </p>
-    {% elif parent == 'site' %}
+    {% elif parent == "site" %}
     <p>
         <a href="{{ url_for("admin.site") }}">site</a>
         &gt;&gt; 
@@ -44,7 +44,7 @@
         <tbody>
         {% for ip in subnet.ips %}
             <tr>
-                <td><a href="{{ url_for("admin.ip_detail", ip_id=ip.id, next=parent_url) }}">{{ ip.address }}</a></td>
+                <td><a href="{{ url_for("admin.ip_detail", ip_id=ip.id) }}">{{ ip.address }}</a></td>
                 <td>{{ ip.is_inuse|ip_use_status }}</td>
                 <td>{{ ip.host.hostname }}</td>
                 <td>{{ ip.host.description }}</td>
@@ -52,9 +52,9 @@
                     <div class="dropdown">
                     <p class="action" id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="{{ url_for("admin.assign_ip", ip_id=ip.id, next=parent_url) }}">assign</a></li>
-                        <li><a href="{{ url_for("admin.edit_ip", ip_id=ip.id, next=parent_url) }}">edit</a></li>
-                        <li><a href="{{ url_for("admin.release_ip", ip_id=ip.id, next=parent_url) }}">release</a></li>
+                        <li><a href="{{ url_for("admin.assign_ip", ip_id=ip.id) }}">assign</a></li>
+                        <li><a href="{{ url_for("admin.edit_ip", ip_id=ip.id) }}">edit</a></li>
+                        <li><a href="{{ url_for("admin.release_ip", ip_id=ip.id) }}">release</a></li>
                     </ul>
                     </div>
                 
