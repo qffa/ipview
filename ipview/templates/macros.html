@@ -36,51 +36,52 @@
 {% endmacro %}
 
 
+<!-- render modal form -->
+
 {% macro render_modal_form(form, url, header) %}
-
-    <form method="POST" action="{{ url }}">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">{{ header }}</h4>
+<form method="POST" id="modal-form" action="{{ url }}">
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="myModalLabel">{{ header }}</h4>
+</div>
+<div class="modal-body">
+{{ form.csrf_token }}
+{% for field in form %}
+{% if field.type == 'CSRFTokenField' %}
+    {{ '' }}
+{% elif field.type == "HiddenField" %}
+    {{ field }}
+{% elif field.name == 'id' %}
+    {{ '' }}
+{% elif field.type == 'BooleanField' %}
+    <div class="checkbox">
+        <label>
+        {{ field }}<span>{{ field.label.text }}</span>
+        </label>
     </div>
-    <div class="modal-body">
-    {{ form.csrf_token }}
-    {% for field in form %}
-    {% if field.type == 'CSRFTokenField' %}
-        {{ '' }}
-    {% elif field.type == "HiddenField" %}
-        {{ field }}
-    {% elif field.name == 'id' %}
-        {{ '' }}
-    {% elif field.type == 'BooleanField' %}
-        <div class="checkbox">
-            <label>
-            {{ field }}<span>{{ field.label.text }}</span>
-            </label>
-        </div>
-    {% elif field.type == 'SubmitField' %}
-        {{ '' }}
-    {% else %}
-        <div class="form-group {% if field.errors %}has-error{% endif %}">
-            {{ field.label }}
-            {{ field(class="form-control") }}
-            {% if field.description %}<span class="text-muted">{{ field.description }}</span>{% endif %}
-            {% if field.errors %}
-            {% for error in field.errors %}
-            <span class="help-block">{{ error }}</span>
-            {% endfor %}
-            {% endif %}
-        </div>
-    {% endif %}
-    {% endfor %}
+{% elif field.type == 'SubmitField' %}
+    {{ '' }}
+{% else %}
+    <div class="form-group {% if field.errors %}has-error{% endif %}">
+        {{ field.label }}
+        {{ field(class="form-control") }}
+        {% if field.description %}<span class="text-muted">{{ field.description }}</span>{% endif %}
+        {% if field.errors %}
+        {% for error in field.errors %}
+        <span class="help-block">{{ error }}</span>
+        {% endfor %}
+        {% endif %}
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        {{ form.submit(class="btn btn-primary", type="submit")}}
-    </div>
+{% endif %}
+{% endfor %}
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    {{ form.submit(class="btn btn-primary", type="submit")}}
+</div>
 
 
-    </form>
+</form>
 {% endmacro %}
 
 
@@ -121,7 +122,7 @@
                     <li>
                         <a href="{{ url_for("admin.edit_subnet", subnet_id=subnet.id, next=parent_url) }}">edit</a>
                     </li>
-                    <li data-toggle="modal" data-target="#myModal" data-backdrop="static" data-keyboard="false">
+                    <li data-toggle="modal" data-target="#loadingEffect" data-backdrop="static" data-keyboard="false">
                         <a href="{{ url_for("admin.delete_subnet", subnet_id=subnet.id, next=parent_url) }}">delete</a>
                     </li>
                 </ul>

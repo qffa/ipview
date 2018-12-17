@@ -130,7 +130,7 @@ def add_site():
             flash("failed to add site", "danger")
         return redirect(url_for("admin.site"))
     else:
-        return render_template("admin/add_site.html", form=form)
+        return render_template("admin/add_site_modal.html", form=form)
 
 
 @admin.route("/site/<int:site_id>")
