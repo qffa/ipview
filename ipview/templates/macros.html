@@ -39,7 +39,7 @@
 <!-- render modal form -->
 
 {% macro render_modal_form(form, url, header) %}
-<form method="POST" id="modal-form" action="{{ url }}">
+<form method="POST" action="{{ url }}">
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title" id="myModalLabel">{{ header }}</h4>

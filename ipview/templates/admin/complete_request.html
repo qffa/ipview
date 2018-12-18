@@ -36,8 +36,9 @@
 
 
 {% block script %}
+{{ super() }}
 <script>
-    document.getElementById("sub_request").classList.add("in")
-    document.getElementById("complete_request").classList.add("active")
+    document.getElementById("sub-request").classList.add("in")
+    document.getElementById("complete-request").classList.add("active")
 </script>
 {% endblock %}

@@ -50,31 +50,31 @@
 {% block script %}
     {{ super() }}
     <script>
-            function submitForm(event) {
-                event.preventDefault();
-                var $form =$(this),
-                    url = $form.attr("action"),
-                    data = $form.serializeArray();
-                var posting = $.post(url, data);
-                posting.done(function(resp) {
-                    if ($(resp).find("#navbar").length > 0) {
-                        window.location.reload();
-                    }
-                    else {
-                        $form.parents(".modal").empty().append(resp);
-                    }
-                })
-            }
+        function submitForm(event) {
+            event.preventDefault();
+            var $form =$(this),
+                url = $form.attr("action"),
+                data = $form.serializeArray();
+            var posting = $.post(url, data);
+            posting.done(function(resp) {
+                if ($(resp).find("#navbar").length > 0) {
+                    window.location.reload();
+                }
+                else {
+                    $form.parents(".modal").empty().append(resp);
+                }
+            })
+        }
         function addSite() {
             $("#add-site-modal").load("/admin/site/add");
             $("#add-site-modal").modal("show");
-            $("#add-site-modal").on("submit", "#modal-form", submitForm);
+            $("#add-site-modal").on("submit", "form", submitForm);
         }
 
         function editSite(siteID) {
             $("#edit-site-modal").load("/admin/site/"+siteID+"/edit");
             $("#edit-site-modal").modal("show")
-            $("#edit-site-modal").on("submit", "#modal-form", submitForm);
+            $("#edit-site-modal").on("submit", "form", submitForm);
         }
 
 

@@ -10,9 +10,9 @@
             <ul class="nav nav-sidebar">
                 <li id="summary" {% block summary %}{% endblock %}><a href="{{ url_for("admin.summary") }}">Summary</a></li>
                 <li onclick="active_request()" id="request" {% block request %}{% endblock %}>
-                    <a data-toggle="collapse" href="#sub_request">Requests</a>
+                    <a data-toggle="collapse" href="#sub-request">Requests</a>
                 </li>
-                <ul class="collapse level2-menu" id="sub_request">
+                <ul class="collapse level2-menu" id="sub-request">
                     <li id="waiting-request">
                         <a href="{{ url_for("admin.waiting_request") }}">waiting 
                             {% if waiting_request_count > 0 %}
