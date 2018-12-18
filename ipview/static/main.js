@@ -21,7 +21,8 @@ function submitForm(event) {
         }
     })
     posting.fail(function(jqXHR) {
-        $("html").empty().append(jqXHR.responseText);
+        //$("html").empty().append(jqXHR.responseText);
+        $("html").empty().append("error happens");
     
     })
 }

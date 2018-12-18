@@ -199,7 +199,7 @@ def add_network():
             flash("failed to add network", "danger")
         return redirect(url_for("admin.network"))
     else:
-        return render_template("admin/add_network.html", form=form)
+        return render_template("admin/add_network_modal.html", form=form)
 
 
 @admin.route("/network/<int:network_id>/edit", methods=['GET', 'POST'])
@@ -216,7 +216,7 @@ def edit_network(network_id):
         network.save()
         return redirect(url_for("admin.network"))
     else:
-        return render_template("admin/edit_network.html", form=form, network_id=network_id)
+        return render_template("admin/edit_network_modal.html", form=form, network_id=network_id)
 
 
 @admin.route("/network/<int:network_id>/delete")
@@ -294,7 +294,7 @@ def add_subnet_under(network_id):
 
         return redirect(url_for("admin.network_detail", network_id=network.id))
     else:
-        return render_template("/admin/add_subnet.html", form=form, network=network)
+        return render_template("/admin/add_subnet_modal.html", form=form, network=network)
 
 
 @admin.route("/subnet/<int:subnet_id>/edit", methods=['GET', 'POST'])

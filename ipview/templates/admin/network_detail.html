@@ -7,10 +7,17 @@
     <p><a href="{{ url_for("admin.network") }}">network</a> &gt;&gt; {{ network.address }} </p>
 {% endblock %}
 
+
+{% block modal %}
+    <div class="modal fade" id="add-subnet-modal" tabindex="-1" role="dialg"></div>
+    <div class="modal fade" id="edit-subnet-modal" tabindex="-1" role="dialg"></div>
+{% endblock %}
+
+
 {% block content %}
     <h1 class="page-header">{{ network.address }}</h1>
     <div class="command-btn">
-        <a type="button" class="btn btn-default" href="{{ url_for("admin.add_subnet_under", network_id=network.id) }}">Add Subnet</a>
+        <a type="button" class="btn btn-default" onclick="addSubnetUnder({{ network.id }})">Add Subnet</a>
     </div>
 
 
@@ -54,4 +61,31 @@
 
 
 
+{% endblock %}
+
+
+{% block script %}
+{{ super() }}
+<script>
+    function addSubnetUnder(networkID) {
+        $("#add-subnet-modal").load("/admin/network/" + networkID + "/addsubnet");
+        $("#add-subnet-modal").modal("show");
+        $("#add-subnet-modal").on("submit", "form", submitForm);
+    }
+
+
+    $("#add-subnet-modal").on("click", "#nav-tab-1", function() {
+        $("#nav-tab-2").removeClass("active");
+        $("#form-tab-2").hide();
+        $("#nav-tab-1").addClass("active");
+        $("#form-tab-1").show();
+    })
+
+    $("#add-subnet-modal").on("click", "#nav-tab-2", function() {
+        $("#nav-tab-1").removeClass("active");
+        $("#form-tab-1").hide();
+        $("#nav-tab-2").addClass("active");
+        $("#form-tab-2").show();
+    })
+</script>
 {% endblock %}

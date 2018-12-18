@@ -36,64 +36,95 @@
 {% endmacro %}
 
 
+
+<!-- used by render_modal_form -->
+{% macro render_form_content(form) %}
+<div class="row">
+    <div class="col-md-6">
+    {% set desc = [] %}
+    {% for field in form %}
+    {% if field.type == 'CSRFTokenField' %}
+        {{ form.csrf_token }}
+    {% elif field.type == "HiddenField" %}
+        {{ field }}
+    {% elif field.type == 'DescriptionField' %}
+        {{ desc.append(field.text) }}
+    {% elif field.name == 'id' %}
+        {{ '' }}
+    {% elif field.type == 'BooleanField' %}
+        <div class="checkbox">
+            <label>
+            {{ field }}<span>{{ field.label.text }}</span>
+            </label>
+        </div>
+    {% elif field.type == 'SubmitField' %}
+        {{ '' }}
+    {% else %}
+        <div class="form-group {% if field.errors %}has-error{% endif %}">
+            {{ field.label }}
+            {{ field(class="form-control") }}
+            {% if field.description %}<span class="text-muted">{{ field.description }}</span>{% endif %}
+            {% if field.errors %}
+            {% for error in field.errors %}
+            <span class="help-block">{{ error }}</span>
+            {% endfor %}
+            {% endif %}
+        </div>
+    {% endif %}
+    {% endfor %}
+    </div>
+    <div class="col-md-6">
+        <h4>Description</h4>
+        {% for t in desc %}
+        <p>{{ t }}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endmacro %}
+
+
+
+
+
+
 <!-- render modal form -->
 
-{% macro render_modal_form(form, url, header) %}
+{% macro render_modal_form(form, url, header, tabs=None) %}
 <form method="POST" action="{{ url }}">
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h4 class="modal-title" id="myModalLabel">{{ header }}</h4>
+    <h4 class="modal-title">{{ header }}</h4>
 </div>
 <div class="modal-body">
-    <div class="row">
-        <div class="col-md-6">
-        {{ form.csrf_token }}
-        {% for field in form %}
-        {% if field.type == 'CSRFTokenField' %}
-            {{ '' }}
-        {% elif field.type == "HiddenField" %}
-            {{ field }}
-        {% elif field.name == 'id' %}
-            {{ '' }}
-        {% elif field.type == 'BooleanField' %}
-            <div class="checkbox">
-                <label>
-                {{ field }}<span>{{ field.label.text }}</span>
-                </label>
-            </div>
-        {% elif field.type == 'SubmitField' %}
-            {{ '' }}
-        {% else %}
-            <div class="form-group {% if field.errors %}has-error{% endif %}">
-                {{ field.label }}
-                {{ field(class="form-control") }}
-                {% if field.description %}<span class="text-muted">{{ field.description }}</span>{% endif %}
-                {% if field.errors %}
-                {% for error in field.errors %}
-                <span class="help-block">{{ error }}</span>
-                {% endfor %}
-                {% endif %}
-            </div>
-        {% endif %}
-        {% endfor %}
-        </div>
-        <div class="col-md-6">
-            <h4>Description</h4>
-            {% for text in form.help_text %}
-            <p>{{ text }}</p>
-            {% endfor %}
-
-        </div>
+    {% if tabs %}
+    <ul class="nav nav-tabs">
+        <li id="nav-tab-1" class="active"><a href="#">IP Info</a></li>
+        <li id="nav-tab-2" class=""><a href="#">Detail</a></li>
+    </ul>
+    {% set fields = [] %}
+    {% for field in form %}
+        {{ fields.append(field) or '' }}
+    {% endfor %}
+    <div id="form-tab-1">
+    {{ render_form_content(fields[:5]) }}
     </div>
+    <div id="form-tab-2" style="display: none;">
+    {{ render_form_content(fields[5:]) }}
+    </div>
+    {% else %}
+    {{ render_form_content(form) }}
+    {% endif %}
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
     {{ form.submit(class="btn btn-primary", type="submit")}}
 </div>
-
-
 </form>
 {% endmacro %}
+
+
+
+
 
 
 <!-- render subnet -->

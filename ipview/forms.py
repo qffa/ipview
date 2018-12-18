@@ -2,12 +2,30 @@ import re
 import ipaddress
 from flask import flash
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, IntegerField, HiddenField
+from wtforms.widgets import TextInput
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, IntegerField, HiddenField, Field
 from wtforms.validators import Length, Email, EqualTo, Required, NumberRange, MacAddress
 from ipview.models import db, Site, Network, Subnet, User
 from flask_login import current_user
 
 
+"""
+custom Field
+"""
+
+class DescriptionField(Field):
+    
+    text = ["ttx"]
+    
+    widget = TextInput()
+
+    def _value(self):
+        if self.data:
+            return ','.join(self.data)
+        else:
+            return ''
+
+    
 
 
 """
@@ -160,26 +178,25 @@ class NetworkForm(FlaskForm):
         )
     submit = SubmitField("Submit")
 
+    help_text = ["A network is a CIDR block, a suppernet. This network range is managed by you. And you will assign subnet under this network."]
+
 
 class AddNetworkForm(NetworkForm):
     def validate_address(self, field):
         try:
             ipaddress.ip_network(field.data)
         except:
-            raise ValidationError("network address format wrong")
+            raise ValidationError("Invalid network address")
         this_network = ipaddress.ip_network(field.data)
         networks = Network.query.all()
         for network in networks:
             network = ipaddress.ip_network(network.address)
             if this_network.overlaps(network):
-                raise ValidationError("network conflict")
+                raise ValidationError("Network conflict")
     
 
 
 class SubnetForm(FlaskForm):
-    network_id = HiddenField(       # transfer network id to subnet form
-        label = ''
-        )
     name = StringField(
         "*Subnet Name",
         validators=[Length(2, 30)],
@@ -189,6 +206,26 @@ class SubnetForm(FlaskForm):
         "*Subnet Address",
         render_kw={"placeholder": "10.10.1.0/24"},
         description="*slow on big size subnet"
+        )
+    site_id = SelectField(
+        "*Site", 
+        coerce=int,
+        validators=[Required()]
+        )
+    vlan = IntegerField(
+        "*VLAN ID",
+        description="* 0 means not a VLAN",
+        validators=[NumberRange(0, 4096)]
+        )
+    is_requestable = BooleanField(
+        "allow user to request IP address from this subnet"
+        )
+    des_tab_1 = DescriptionField(["text here"])
+    des_tab_1.text = ["some text here"]
+    
+    description = TextAreaField(
+        "Description",
+        #validators=[Length(4, 200)]
         )
     gateway = StringField(
         "Gateway",
@@ -201,24 +238,9 @@ class SubnetForm(FlaskForm):
         "DNS2",
         validators=[IPAddress()]
         )
-    site_id = SelectField(
-        "*Site", 
-        coerce=int,
-        validators=[Required()]
+    network_id = HiddenField(       # transfer network id to subnet form
+        label = ''
         )
-    description = StringField(
-        "*Description",
-        validators=[Length(4, 200)]
-        )
-    vlan = IntegerField(
-        "*VLAN ID",
-        description="* 0 means not a VLAN",
-        validators=[NumberRange(0, 4096)]
-        )
-    is_requestable = BooleanField(
-        "allow user to request IP address from this subnet"
-        )
-
     submit = SubmitField(
         "Submit",
         render_kw={

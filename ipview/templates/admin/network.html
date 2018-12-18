@@ -2,10 +2,16 @@
 
 {% block network %} class="active"{% endblock %}
 
+
+{% block modal %}
+    <div class="modal fade" id="add-network-modal" tabindex="-1" role="dialg"></div>
+    <div class="modal fade" id="edit-network-modal" tabindex="-1" role="dialg"></div>
+{% endblock %}
+
 {% block content %}
     <h1 class="page-header">Netwok</h1>
     <div class="command-btn">
-        <a type="button" class="btn btn-default" href="{{ url_for("admin.add_network") }}">New Network( Supernet )</a>
+        <a type="button" class="btn btn-default" onclick="addNetwork()">Add Network</a>
     </div>
     <table class="table table-hover text-nowrap table-condensed">
         <thead>
@@ -24,7 +30,7 @@
                     <div class="dropdown">
                     <p class="action" id="dropdownMenu1" data-toggle="dropdown"><span class="caret"></span></p>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="{{ url_for("admin.edit_network", network_id=network.id) }}">edit</a></li>
+                        <li><a href="#" onclick="editNetwork({{ network.id }})">edit</a></li>
                         <li><a href="{{ url_for("admin.delete_network", network_id=network.id) }}">delete</a></li>
                     </ul>
                     </div>
@@ -35,10 +41,23 @@
         </tbody>
     </table>
 
-    <!--
-    <div>
-        <button type="button" clas="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Test loading</button>
-    </div>
-    -->
+
+{% endblock %}
+
+{% block script%}
+{{ super() }}
+<script>
+    function addNetwork() {
+        $("#add-network-modal").load("/admin/network/add");
+        $("#add-network-modal").modal("show");
+        $("#add-network-modal").on("submit", "form", submitForm);
+    }
+    function editNetwork(networkID) {
+        $("#edit-network-modal").load("/admin/network/" + networkID + "/edit");
+        $("#edit-network-modal").modal("show");
+        $("#edit-network-modal").on("submit", "form", submitForm);
+    }
+
+</script>
 
 {% endblock %}

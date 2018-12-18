@@ -1,6 +1,6 @@
 {% from "macros.html" import render_modal_form %}
 
-<div class="modal-dialog" role="document">
+<div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
     {{ render_modal_form(form, url_for("admin.edit_site", site_id=site_id), "Edit Site") }}
     </div>
