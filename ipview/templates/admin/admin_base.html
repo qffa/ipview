@@ -9,23 +9,23 @@
         <div class="col-sm-3 col-md-2 sidebar">
             <ul class="nav nav-sidebar">
                 <li id="summary" {% block summary %}{% endblock %}><a href="{{ url_for("admin.summary") }}">Summary</a></li>
-                <li onclick="active_request()" id="request" {% block request %}{% endblock %}>
-                    <a data-toggle="collapse" href="#sub-request">Requests</a>
+                <li id="request" {% block request %}{% endblock %}>
+                    <a onclick="activeRequest()" data-toggle="collapse" href="#sub-request">Requests</a>
+                    <ul class="collapse level2-menu" id="sub-request">
+                        <li id="waiting-request">
+                            <a href="{{ url_for("admin.waiting_request") }}">waiting 
+                                {% if waiting_request_count > 0 %}
+                                <span class="badge">
+                                    {{ waiting_request_count }}
+                                </span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li id="complete-request">
+                            <a href="{{ url_for("admin.complete_request") }}">complete</a>
+                        </li>
+                    </ul>
                 </li>
-                <ul class="collapse level2-menu" id="sub-request">
-                    <li id="waiting-request">
-                        <a href="{{ url_for("admin.waiting_request") }}">waiting 
-                            {% if waiting_request_count > 0 %}
-                            <span class="badge">
-                                {{ waiting_request_count }}
-                            </span>
-                            {% endif %}
-                        </a>
-                    </li>
-                    <li id="complete-request">
-                        <a href="{{ url_for("admin.complete_request") }}">complete</a>
-                    </li>
-                </ul>
                 <li id="network" {% block network %}{% endblock %}><a href="{{ url_for("admin.network") }}">Network</a></li>
                 <li id="site" {% block site %}{% endblock %}><a href="{{ url_for("admin.site") }}">Site</a></li>
                 <li id="log" {% block log %}{% endblock %}><a href="{{ url_for("admin.log") }}">Audit Log</a></li>
@@ -55,15 +55,11 @@
 
 
 {% block script %}
+{{ super() }}
 <script> 
-function active_request() {
-    document.getElementById("request").setAttribute("class", "active");
-    document.getElementById("summary").classList.remove("active");
-    document.getElementById("network").classList.remove("active");
-    document.getElementById("site").classList.remove("active");
-    document.getElementById("log").classList.remove("active");
-    document.getElementById("waiting-request").classList.remove("active")
-    document.getElementById("complete-request").classList.remove("active")
+function activeRequest() {
+    $(".nav-sidebar").find("li").removeClass("active");
+    $("#request").addClass("active");
 }
 </script>
 {% endblock %}
