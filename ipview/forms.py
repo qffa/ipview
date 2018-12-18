@@ -145,6 +145,8 @@ class SiteForm(FlaskForm):
             )
     submit = SubmitField("Submit")
 
+    help_text = ["Normally, a site is related to a geography location, such as headquarter, a branch office, a factory, etc..."]
+
 
 
 class NetworkForm(FlaskForm):
