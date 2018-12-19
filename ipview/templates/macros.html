@@ -38,48 +38,40 @@
 
 
 <!-- used by render_modal_form -->
-{% macro render_form_content(form) %}
-<div class="row">
-    <div class="col-md-6">
-    {% set desc = [] %}
-    {% for field in form %}
-    {% if field.type == 'CSRFTokenField' %}
-        {{ form.csrf_token }}
-    {% elif field.type == "HiddenField" %}
-        {{ field }}
-    {% elif field.type == 'DescriptionField' %}
-        {{ desc.append(field.text) }}
-    {% elif field.name == 'id' %}
-        {{ '' }}
-    {% elif field.type == 'BooleanField' %}
-        <div class="checkbox">
-            <label>
-            {{ field }}<span>{{ field.label.text }}</span>
-            </label>
-        </div>
-    {% elif field.type == 'SubmitField' %}
-        {{ '' }}
-    {% else %}
-        <div class="form-group {% if field.errors %}has-error{% endif %}">
-            {{ field.label }}
-            {{ field(class="form-control") }}
-            {% if field.description %}<span class="text-muted">{{ field.description }}</span>{% endif %}
-            {% if field.errors %}
-            {% for error in field.errors %}
-            <span class="help-block">{{ error }}</span>
-            {% endfor %}
-            {% endif %}
-        </div>
-    {% endif %}
-    {% endfor %}
+{% macro render_form_field(field) %}
+{% if field.type == 'CSRFTokenField' %}
+    {{ field }}
+{% elif field.type == "HiddenField" %}
+    {{ field }}
+{% elif field.name == 'id' %}
+    {{ '' }}
+{% elif field.type == 'BooleanField' %}
+    <div class="checkbox">
+        <label>
+        {{ field }}<span>{{ field.label.text }}</span>
+        </label>
     </div>
-    <div class="col-md-6">
-        <h4>Description</h4>
-        {% for t in desc %}
-        <p>{{ t }}</p>
+{% elif field.type == 'SubmitField' %}
+    {{ '' }}
+{% else %}
+    <div class="form-group {% if field.errors %}has-error{% endif %}">
+        {{ field.label }}
+        {{ field(class="form-control") }}
+        {% if field.description %}<span class="text-muted">{{ field.description }}</span>{% endif %}
+        {% if field.errors %}
+        {% for error in field.errors %}
+        <span class="help-block">{{ error }}</span>
         {% endfor %}
+        {% endif %}
     </div>
-</div>
+{% endif %}
+{% endmacro %}
+
+{% macro render_form_description(description) %}
+<h4>Description</h4>
+{% for text in description %}
+<p>{{ text }}</p>
+{% endfor %}
 {% endmacro %}
 
 
@@ -96,23 +88,47 @@
     <h4 class="modal-title">{{ header }}</h4>
 </div>
 <div class="modal-body">
+    {% set fields=[]  %}
+    {% for field in form %}
+        {{ fields.append(field) or '' }}
+    {% endfor %}
+
     {% if tabs %}
     <ul class="nav nav-tabs">
         <li id="nav-tab-1" class="active"><a href="#">IP Info</a></li>
         <li id="nav-tab-2" class=""><a href="#">Detail</a></li>
     </ul>
-    {% set fields = [] %}
-    {% for field in form %}
-        {{ fields.append(field) or '' }}
-    {% endfor %}
-    <div id="form-tab-1">
-    {{ render_form_content(fields[:5]) }}
+    <div class="row" id="form-tab-1">
+        <div class="col-md-6">
+        {% for field in fields[:5] %}
+        {{ render_form_field(field) }}
+        {% endfor %}
+        </div>
+        <div class="col-md-6">
+        {{ render_form_description(form.form_description_1) }}
+        </div>
     </div>
-    <div id="form-tab-2" style="display: none;">
-    {{ render_form_content(fields[5:]) }}
+    <div class="row" id="form-tab-2" style="display: none;">
+        <div class="col-md-6">
+        {% for field in fields[5:] %}
+        {{ render_form_field(field) }}
+        {% endfor %}
+        </div>
+        <div class="col-md-6">
+        {{ render_form_description(form.form_description_2) }}
+        </div>
     </div>
     {% else %}
-    {{ render_form_content(form) }}
+    <div class="row">
+        <div class="col-md-6">
+        {% for field in fields %}
+        {{ render_form_field(field) }}
+        {% endfor %}
+        </div>
+        <div class="col-md-6">
+        {{ render_form_description(form.form_description_1) }}
+        </div>
+    </div>
     {% endif %}
 </div>
 <div class="modal-footer">

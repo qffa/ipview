@@ -47,7 +47,7 @@
                         <li>
                             <a href="{{ url_for("admin.edit_subnet", subnet_id=subnet.id) }}">edit</a>
                         </li>
-                        <li data-toggle="modal" data-target="#myModal" data-backdrop="static" data-keyboard="false">
+                        <li data-toggle="modal" data-target="#loading-effect" data-backdrop="static" data-keyboard="false">
                             <a href="{{ url_for("admin.delete_subnet", subnet_id=subnet.id) }}">delete</a>
                         </li>
                     </ul>

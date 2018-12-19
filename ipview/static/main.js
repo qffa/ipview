@@ -7,12 +7,12 @@ function submitForm(event) {
     var $form =$(this),
         url = $form.attr("action"),
         data = $form.serialize();
-    var posting = $.post(url, data);
+    $form.parents(".modal").modal("hide");
     $("#loading-effect").modal("show");
+    var posting = $.post(url, data);
     posting.done(function(data) {
         $("#loading-effect").modal("hide");
         if ($(data).find("#navbar").length > 0) {
-            $form.parents(".modal").modal("hide");
             var content = $(data).find(".row");
             $(".row").empty().append(content);
         }
@@ -20,9 +20,8 @@ function submitForm(event) {
             $form.parents(".modal").empty().append(data);
         }
     })
-    posting.fail(function(jqXHR) {
+    posting.fail(function(jqXHR, textStatus, errorThrown) {
         //$("html").empty().append(jqXHR.responseText);
-        $("html").empty().append("error happens");
-    
+        $("html").empty().append(errorThrown);
     })
 }

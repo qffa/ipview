@@ -2,28 +2,10 @@ import re
 import ipaddress
 from flask import flash
 from flask_wtf import FlaskForm
-from wtforms.widgets import TextInput
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, IntegerField, HiddenField, Field
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, IntegerField, HiddenField
 from wtforms.validators import Length, Email, EqualTo, Required, NumberRange, MacAddress
 from ipview.models import db, Site, Network, Subnet, User
 from flask_login import current_user
-
-
-"""
-custom Field
-"""
-
-class DescriptionField(Field):
-    
-    text = ["ttx"]
-    
-    widget = TextInput()
-
-    def _value(self):
-        if self.data:
-            return ','.join(self.data)
-        else:
-            return ''
 
     
 
@@ -163,7 +145,7 @@ class SiteForm(FlaskForm):
             )
     submit = SubmitField("Submit")
 
-    help_text = ["Normally, a site is related to a geography location, such as headquarter, a branch office, a factory, etc..."]
+    form_description_1 = ["Normally, a site is related to a geography location, such as headquarter, a branch office, a factory, etc..."]
 
 
 
@@ -178,7 +160,7 @@ class NetworkForm(FlaskForm):
         )
     submit = SubmitField("Submit")
 
-    help_text = ["A network is a CIDR block, a suppernet. This network range is managed by you. And you will assign subnet under this network."]
+    form_description_1 = ["A network is a CIDR block, a suppernet. This network range is managed by you. And you will assign subnet under this network."]
 
 
 class AddNetworkForm(NetworkForm):
@@ -220,9 +202,6 @@ class SubnetForm(FlaskForm):
     is_requestable = BooleanField(
         "allow user to request IP address from this subnet"
         )
-    des_tab_1 = DescriptionField(["text here"])
-    des_tab_1.text = ["some text here"]
-    
     description = TextAreaField(
         "Description",
         #validators=[Length(4, 200)]
@@ -250,6 +229,11 @@ class SubnetForm(FlaskForm):
             "data-keyboard": "false"
         }
         )
+
+    form_description_1 = ["desc1"]
+
+
+    form_description_2 = ["desc 2"]
 
 
     def validate_gateway(self, field):
